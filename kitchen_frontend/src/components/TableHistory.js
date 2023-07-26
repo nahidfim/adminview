@@ -8,8 +8,7 @@ import Paper from '@mui/material/Paper';
 import { Button} from '@mui/base';
 import React, {useState} from "react"; 
 
-const SpanningTable = () => {
-    const [value, setValue] = useState(""); 
+const SpanningTable = ({setValue}) => {
     const handleDeliveryConfirmationScreen = () => {
         setValue(3);
       }
@@ -39,11 +38,9 @@ const SpanningTable = () => {
               <TableCell align="right">1</TableCell>
               <TableCell align="right">
               <Button onClick={handleDeliveryConfirmationScreen}>OK</Button>
-              </TableCell>
-              
+              </TableCell>     
         </TableBody>
-      </Table>
-     
+      </Table>      
     </TableContainer>
   )
 }

@@ -5,7 +5,7 @@ import { Box, InputLabel,FormControl,Select,MenuItem,Button} from '@mui/material
 import styles from "./ViewOrder.module.css";
 
 
-const ViewOrder = ({setValue, sum, setSum}) => {
+const ViewOrder = ({setValue}) => {
   const [tableData, setTableData] = React.useState([])
   const [age, setAge] = React.useState('');
   const handleChange = (event) => {
@@ -31,7 +31,7 @@ const ViewOrder = ({setValue, sum, setSum}) => {
   </Select>
   </FormControl>
     </Box>
-    <SpanningTable tableData={tableData}/>
+    <SpanningTable tableData={tableData} setValue={setValue} />
  </Box>
      
   )
