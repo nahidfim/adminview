@@ -8,6 +8,7 @@ import ViewOrder from "./screens/ViewOrder/ViewOrder";
 import DeliveryConfirmationScreen from "./screens/DeliveryConfirmationScreen/DeliveryConfirmationScreen";
 function App() {
   const [value, setValue] = useState(0);
+  const [data, setData] = useState([]);
   const [image, setImage] = useState("");
   const [sum, setSum] = useState(0);
 
@@ -44,11 +45,11 @@ function App() {
       </TabPanel>
       <TabPanel value={value} index={2} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
-        <ViewOrder setValue={setValue}/>
+        <ViewOrder setValue={setValue} setData={setData}/>
       </TabPanel>
       <TabPanel value={value} index={3} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
-        <DeliveryConfirmationScreen setValue={setValue}/>
+        <DeliveryConfirmationScreen setValue={setValue} data={data}/>
       </TabPanel>
 
       <Box sx={{ p: 3 }}>{/* Your content goes here */}</Box>

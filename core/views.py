@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from core.models import order_transactions
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -13,15 +13,22 @@ def front(request):
 def get_order_transactions(request, data_flag):
     if request.method == "GET":
         if data_flag == "all":
-            data = list(order_transactions.objects.filter(product_code=1).values())
+            data = order_transactions.objects.filter(product_code=1).values()
+            print(data)
         else:
-            data = list(order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).values())
-        return HttpResponse(data)
+            data = order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(order_cancellation_flag=False).values()
+        return JsonResponse(list(data), safe=False)
     
 @csrf_exempt
 def change_status(request, order_id):
     if request.method == "GET":
         row = order_transactions.objects.filter(order_no=order_id).update(provision_completion_flag=True)
+        return HttpResponse("Order has been updated")
+    
+@csrf_exempt
+def cancel_order(request, order_id):
+    if request.method == "GET":
+        row = order_transactions.objects.filter(order_no=order_id).update(order_cancellation_flag=True)
         return HttpResponse("Order has been updated")
     
 

@@ -8,10 +8,16 @@ import Paper from '@mui/material/Paper';
 import { Button} from '@mui/base';
 import React, {useState} from "react"; 
 
-const SpanningTable = ({setValue}) => {
-    const handleDeliveryConfirmationScreen = () => {
+const SpanningTable = ({tableData, setValue, setData}) => {
+    const handleDeliveryConfirmationScreen = (item) => {
+      console.log(item);
+        setData(item);
         setValue(3);
       }
+      const handleCancelOrder = (item) => {
+        fetch("/cancel_order/" + item.order_no).then((response) => {return response.json()}).then((data) => {return data});
+      }
+
    
   return (
     <TableContainer component={Paper}>   
@@ -20,7 +26,7 @@ const SpanningTable = ({setValue}) => {
           <TableRow>
             <TableCell align="right">No.</TableCell>
             <TableCell align="right">Order No.</TableCell>
-            <TableCell align="right">Item Name</TableCell>
+            <TableCell align="right">Product Code</TableCell>
             <TableCell align="right">Lan No.</TableCell>
             <TableCell align="right">Tablet No.</TableCell>
             <TableCell align="right">Order Time.</TableCell>
@@ -29,16 +35,24 @@ const SpanningTable = ({setValue}) => {
           </TableRow>
         </TableHead>
         <TableBody>
-              <TableCell align="right"> 1</TableCell>
-              <TableCell align="right"> O3454jjk43k53434541</TableCell>
-              <TableCell align="right"> Item1</TableCell>
-              <TableCell align="right"> 1</TableCell>
-              <TableCell align="right"> 4</TableCell>
-              <TableCell align="right"> 20230721 11:04</TableCell>
-              <TableCell align="right">1</TableCell>
-              <TableCell align="right">
-              <Button onClick={handleDeliveryConfirmationScreen}>OK</Button>
-              </TableCell>     
+          {tableData.map((item)=>
+            <TableRow>
+            <TableCell align="right"> 1</TableCell>
+            <TableCell align="right"> {item.order_no}</TableCell>
+            <TableCell align="right"> {item.product_code}</TableCell>
+            <TableCell align="right"> {item.lane_no}</TableCell>
+            <TableCell align="right"> {item.table_no}</TableCell>
+            <TableCell align="right"> {item.order_time}</TableCell>
+            <TableCell align="right">{item.order_amount}</TableCell>
+            <TableCell align="right">
+            <Button onClick={()=>handleDeliveryConfirmationScreen(item)}>OK</Button>
+            </TableCell>
+            <TableCell align="right">
+            <Button onClick={()=>handleCancelOrder(item)}>Cancel</Button>
+            </TableCell>        
+            </TableRow> 
+          )}
+            
         </TableBody>
       </Table>      
     </TableContainer>

@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import front, get_order_transactions, change_status
+from core.views import front, get_order_transactions, change_status, cancel_order
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", front, name="front"),
     path("get_order_transactions/<str:data_flag>", get_order_transactions),
-    path("change_status/<str:order_id>", change_status)
+    path("change_status/<str:order_id>", change_status),
+    path("cancel_order/<str:order_id>", cancel_order)
 ]
