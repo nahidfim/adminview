@@ -13,10 +13,10 @@ def front(request):
 def get_order_transactions(request, data_flag):
     if request.method == "GET":
         if data_flag == "all":
-            data = order_transactions.objects.filter(product_code=1).values()
+            data = order_transactions.objects.filter(product_code=1).filter(order_status="active").values()
             print(data)
         else:
-            data = order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(order_cancellation_flag=False).values()
+            data = order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(order_cancellation_flag=False).filter(order_status="active").values()
         return JsonResponse(list(data), safe=False)
     
 @csrf_exempt
@@ -29,6 +29,24 @@ def change_status(request, order_id):
 def cancel_order(request, order_id):
     if request.method == "GET":
         row = order_transactions.objects.filter(order_no=order_id).update(order_cancellation_flag=True)
+        return HttpResponse("Order has been updated")
+    
+    
+@csrf_exempt
+def login(request, order_id):
+    if request.method == "GET":
+        return HttpResponse("Order has been updated")
+    
+    
+@csrf_exempt
+def logout(request, order_id):
+    if request.method == "GET":
+        return HttpResponse("Order has been updated")
+    
+    
+@csrf_exempt
+def register(request, order_id):
+    if request.method == "GET":
         return HttpResponse("Order has been updated")
     
 
