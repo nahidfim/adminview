@@ -24,6 +24,10 @@ const KitchenHome = ({ setValue }) => {
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value)
   }
+
+  const handleLoginAndRegisterScreen = (e) => {
+    setValue(4);
+  }
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.firstBox}>
@@ -53,6 +57,13 @@ const KitchenHome = ({ setValue }) => {
             onClick={handleOrderConfirmationScreen}
           >
             Order Confirmation Screen
+          </Button>
+          <Button
+            variant="large"
+            className={styles.lightblueButton}
+            onClick={handleLoginAndRegisterScreen}
+          >
+            Login And Register Screen
           </Button>
         </Box>
       </Box>

@@ -6,6 +6,9 @@ import KitchenHome from "./screens/KitchenHome/KitchenHome";
 import OrderConfirmationScreen from "./screens/OrderConfirmationScreen/OrderConfirmationScreen";
 import ViewOrder from "./screens/ViewOrder/ViewOrder";
 import DeliveryConfirmationScreen from "./screens/DeliveryConfirmationScreen/DeliveryConfirmationScreen";
+import SignInSide from "./screens/LoginAndRegister/Login";
+import SignUp from "./screens/LoginAndRegister/Register";
+
 function App() {
   const [value, setValue] = useState(0);
   const [data, setData] = useState([]);
@@ -34,6 +37,8 @@ function App() {
         <Tab label="OrderConfirmationScreen" />
         <Tab label="ViewOrder" />
         <Tab label="DeliveryConfirmationScreen" />
+        <Tab label="LoginScreen"/>
+        <Tab label="SignupScreen"/>
       </Tabs>
       <TabPanel value={value} index={0} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
@@ -50,6 +55,14 @@ function App() {
       <TabPanel value={value} index={3} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <DeliveryConfirmationScreen setValue={setValue} data={data}/>
+      </TabPanel>
+      <TabPanel value={value} index={4} sx={{ minWidth: "100%" }}>
+        {/* Your content for Tab 1 goes here */}
+        <SignInSide setValue={setValue} data={data}/>
+      </TabPanel>
+      <TabPanel value={value} index={5} sx={{ minWidth: "100%" }}>
+        {/* Your content for Tab 1 goes here */}
+        <SignUp setValue={setValue} data={data}/>
       </TabPanel>
 
       <Box sx={{ p: 3 }}>{/* Your content goes here */}</Box>
