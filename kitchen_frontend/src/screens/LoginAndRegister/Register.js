@@ -43,8 +43,12 @@ export default function SignUp({setValue}) {
             username: data.get('email'),
             password: data.get('password')
           }
-    )}).then(response => response.json())
-    .then(data => {if(data==true){
+    )}).then((response) => {
+        return response.text()}
+    )
+    .then((data) => {
+        console.log(data);
+        if(data){
         setValue(2);
     }
 else{

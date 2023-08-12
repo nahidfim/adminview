@@ -2,7 +2,7 @@ from django.shortcuts import render
 from core.models import order_transactions, operator_code_master
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django import db
+import json
 
 # Create your views here.
 
@@ -36,10 +36,13 @@ def cancel_order(request, order_id):
 @csrf_exempt
 def login(request):
     if request.method == "POST":
-        check_user = operator_code_master.objects.filter(operator_name=request.POST.get('username')).filter(operator_password=request.POST.get('password')).first()
+        body = json.loads(request.body)
+        username = body['username']
+        password = body['password']
+        check_user = operator_code_master.objects.filter(operator_name=username).filter(operator_password=password).first()
         if check_user:
-            return True
-        else: False
+            return HttpResponse(True)
+        else: return HttpResponse(False)
         
     
     
@@ -52,13 +55,12 @@ def logout(request):
 @csrf_exempt
 def register(request):
     if request.method == "POST":
-        print(request.GET)
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        print(username, password)
+        body = json.loads(request.body)
+        username = body['username']
+        password = body['password']
         new_user = operator_code_master(operator_name=username, operator_password=password)
         new_user.save()
-        return HttpResponse("Order has been updated")
+        return HttpResponse(True)
     
 
 
