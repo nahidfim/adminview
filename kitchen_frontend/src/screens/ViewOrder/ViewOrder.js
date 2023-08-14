@@ -22,7 +22,7 @@ const ViewOrder = ({setValue, setData}) => {
     else{
       ext = 'all'
     }
-    fetch('/get_order_transactions/' + ext).then((response) => { 
+    fetch('get_order_transactions/' + ext).then((response) => { 
       return response.json(); 
     }).then((data) => {
       console.log(data);

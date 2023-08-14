@@ -25,6 +25,6 @@ urlpatterns = [
     path("change_status/<str:order_id>", change_status),
     path("cancel_order/<str:order_id>", cancel_order),
     path("login", login),
-    path("logout/", logout),
+    path("logout", logout),
     path("register/", register)
 ]

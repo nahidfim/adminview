@@ -86,4 +86,5 @@ class operator_code_master(models.Model):
     operator_code = models.CharField(max_length=30)
     operator_name = models.CharField(max_length=30)
     operator_password = models.CharField(max_length=30)
+    last_login = models.CharField(max_length=30)
     registration_time = models.TimeField(default=datetime.datetime.utcnow())

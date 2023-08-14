@@ -74,6 +74,10 @@ STATICFILES_DIRS = [os.path.join(
 
 WSGI_APPLICATION = 'kitchen_backend.wsgi.application'
 
+LOGIN_URL = '/'
+
+LOGIN_REDIRECT_URL = '/'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

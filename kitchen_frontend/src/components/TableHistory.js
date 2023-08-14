@@ -45,7 +45,9 @@ const SpanningTable = ({tableData, setValue, setData}) => {
             <TableCell align="right"> {item.order_time}</TableCell>
             <TableCell align="right">{item.order_amount}</TableCell>
             <TableCell align="right">
-            <Button onClick={()=>handleDeliveryConfirmationScreen(item)}>OK</Button>
+              {item.order_status=="compeleted"? <Button >Done</Button>
+              :<Button onClick={()=>handleDeliveryConfirmationScreen(item)}>OK</Button>}
+            
             </TableCell>
             <TableCell align="right">
             <Button onClick={()=>handleCancelOrder(item)}>Cancel</Button>
