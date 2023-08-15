@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import front, get_order_transactions, change_status, cancel_order, login, logout, register
+from core.views import front, get_order_transactions, change_status, cancel_order, login, logout, register, add_product, product_data
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +24,8 @@ urlpatterns = [
     path("get_order_transactions/<str:data_flag>", get_order_transactions),
     path("change_status/<str:order_id>", change_status),
     path("cancel_order/<str:order_id>", cancel_order),
+    path("add_product", add_product),
+    path("get_product_data", product_data),
     path("login", login),
     path("logout", logout),
     path("register/", register)

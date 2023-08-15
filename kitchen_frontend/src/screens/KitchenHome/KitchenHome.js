@@ -28,6 +28,9 @@ const KitchenHome = ({ setValue }) => {
   const handleLoginAndRegisterScreen = (e) => {
     setValue(4);
   }
+  const handleProductInfoScreen = (e) => {
+    setValue(6);
+  }
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.firstBox}>
@@ -64,6 +67,13 @@ const KitchenHome = ({ setValue }) => {
             onClick={handleLoginAndRegisterScreen}
           >
             Login And Register Screen
+          </Button>
+          <Button
+            variant="large"
+            className={styles.lightblueButton}
+            onClick={handleProductInfoScreen}
+          >
+            Product Info Screen
           </Button>
         </Box>
       </Box>

@@ -41,15 +41,16 @@ export default function SignUp({setValue}) {
       }, body: JSON.stringify(
         {
             username: data.get('email'),
-            password: data.get('password')
+            password: data.get('password'),
+            operator_code: data.get('operator_code')
           }
     )}).then((response) => {
         return response.text()}
     )
     .then((data) => {
         console.log(data);
-        if(data){
-        setValue(2);
+        if(data=='True'){
+        setValue(4);
     }
 else{
     setValue(5);
@@ -76,6 +77,17 @@ else{
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="operator_code"
+                  required
+                  fullWidth
+                  id="operator_code"
+                  label="Operator Code"
+                  autoFocus
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"

@@ -42,7 +42,7 @@ export default function SignInSide({setValue, data}) {
       response.text())
     .then(data => {
       console.log(data);
-      if(data==true){
+      if(data=='True'){
         setValue(2);
     }
 else{
