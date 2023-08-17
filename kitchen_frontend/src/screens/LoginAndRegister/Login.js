@@ -18,7 +18,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        sushi order system
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -31,20 +31,19 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide({setValue, data}) {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
     var body = {
         username: data.get('email'),
       password: data.get('password'),
     }
-    fetch('/login', {method: 'POST',headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)}).then(response => response.json())
-    .then(data => {if(data==true){
-        setValue(2);
+    await fetch('/login', {method: 'POST',headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)}).then(response =>
+      response.text())
+    .then(data => {
+      console.log(data);
+      if(data=='True'){
+        setValue(1);
     }
 else{
     setValue(4);

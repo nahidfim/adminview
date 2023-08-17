@@ -28,6 +28,9 @@ const KitchenHome = ({ setValue }) => {
   const handleLoginAndRegisterScreen = (e) => {
     setValue(4);
   }
+  const handleProductInfoScreen = (e) => {
+    setValue(6);
+  }
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.firstBox}>
@@ -51,19 +54,26 @@ const KitchenHome = ({ setValue }) => {
   </Select>
         </Button>
         <Box className={styles.buttonGroup}>
-          <Button
+          {/* <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleOrderConfirmationScreen}
           >
             Order Confirmation Screen
-          </Button>
+          </Button> */}
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleLoginAndRegisterScreen}
           >
             Login And Register Screen
+          </Button>
+          <Button
+            variant="large"
+            className={styles.lightblueButton}
+            onClick={handleProductInfoScreen}
+          >
+            Product Info Master
           </Button>
         </Box>
       </Box>

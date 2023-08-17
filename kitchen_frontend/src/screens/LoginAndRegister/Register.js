@@ -18,7 +18,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        suhi order system
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -41,21 +41,24 @@ export default function SignUp({setValue}) {
       }, body: JSON.stringify(
         {
             username: data.get('email'),
-            password: data.get('password')
+            password: data.get('password'),
+            operator_code: data.get('operator_code')
           }
     )}).then((response) => {
         return response.text()}
     )
     .then((data) => {
         console.log(data);
-        if(data){
-        setValue(2);
+        if(data=='True'){
+        setValue(4);
     }
 else{
     setValue(5);
 }})
   };
-
+  const handleSignin = () => {
+    setValue(4);
+  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -76,6 +79,17 @@ else{
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="operator_code"
+                  required
+                  fullWidth
+                  id="operator_code"
+                  label="Operator Code"
+                  autoFocus
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
@@ -135,7 +149,7 @@ else{
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link onClick={handleSignin} variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

@@ -17,7 +17,7 @@ const OrderConfirmationScreen = ({ setValue }) => {
     setValue(2);
   };
   const handleDeliveryConfirmationScreen = () => {
-    setValue(3);
+    setValue(0);
   };
   return (
     <Container className={styles.outermostContainer}>
@@ -27,7 +27,7 @@ const OrderConfirmationScreen = ({ setValue }) => {
      
       <Box className={styles.secondBox}>
       <Typography variant="h5"> Operater Code :XXXXXX</Typography>
-      <Typography variant="h5"> Lan No. :5</Typography>
+    
           <Button
             variant="large"
             className={styles.lightblueButton}
