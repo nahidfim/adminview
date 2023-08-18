@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from core.models import order_transactions, operator_code_master, product_info_master
+from core.models import order_transactions, operator_code_master, product_info_master, product_category_master
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -46,6 +46,7 @@ def login(request):
         password = body['password']
         check_user = operator_code_master.objects.filter(operator_name=username).filter(operator_password=password).first()
         if check_user:
+            request.session['code'] = check_user.operator_code
             return HttpResponse(True)
         else: 
             return HttpResponse(False)
@@ -76,7 +77,9 @@ def add_product(request):
         product_id = body['product_id']
         product_name = body['product_name']
         product_price = body['product_price']
-        new_product = product_info_master(product_id=product_id, product_name_en=product_name, product_price_en=product_price)
+        product_category = body['product_category']
+        image_link = body['image_link']
+        new_product = product_info_master(product_id=product_id, product_name_en=product_name, product_price_en=product_price, category_name=product_category, product_image_link_dest=image_link)
         new_product.save()
         return HttpResponse(True)
 
@@ -86,5 +89,13 @@ def product_data(request):
         product_data = product_info_master.objects.values()
         return JsonResponse(list(product_data), safe=False)
     
-
+@csrf_exempt
+def get_operator(request):
+    if request.method == 'GET':
+        return HttpResponse(request.session.get('code', ''))
+    
+@csrf_exempt
+def get_category(request):
+    if request.method == 'GET':
+        return JsonResponse([i for i in product_category_master.objects.values_list('product_category')], safe=False)
 

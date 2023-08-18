@@ -28,6 +28,7 @@ const ProductSpanningTable = ({tableData, setValue, setData}) => {
             <TableCell align="right">Product ID</TableCell>
             <TableCell align="right">Product Name</TableCell>
             <TableCell align="right">Product Price</TableCell>
+            <TableCell align="right">Product Category</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -36,7 +37,8 @@ const ProductSpanningTable = ({tableData, setValue, setData}) => {
             <TableCell align="right"> 1</TableCell>
             <TableCell align="right"> {item.product_id}</TableCell>
             <TableCell align="right"> {item.product_name_en}</TableCell>
-            <TableCell align="right"> {item.product_price_en}</TableCell>      
+            <TableCell align="right"> {item.product_price_en}</TableCell> 
+            <TableCell align="right"> {item.category_name}</TableCell>     
             </TableRow> 
           )}
             
