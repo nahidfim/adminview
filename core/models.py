@@ -66,6 +66,7 @@ class product_info_master(models.Model):
     category_name = models.CharField(max_length=90, default="Sushi", null=True)
     page_number = models.IntegerField(max_length=90, default=1, null=True)
     registration_time = models.TimeField(default=datetime.datetime.utcnow())
+    image = models.ImageField(default=None, upload_to='static/media')
     product_image_link_dest = models.TextField(max_length=50)
 
 

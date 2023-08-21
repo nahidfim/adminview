@@ -2,6 +2,7 @@ import React from 'react'
 import ProductSpanningTable from "../../components/ProductSpanningTable";
 import { Box, InputLabel,FormControl,Select,MenuItem,Button, TextField} from '@mui/material';
 import styles from "./ProductInfo.module.css";
+import UploadAndDisplayImage from '../../components/UploadAndDisplayImage';
 
 
 const ProductInfo = ({setValue, setData}) => {
@@ -10,6 +11,7 @@ const ProductInfo = ({setValue, setData}) => {
   const [newData, setNewData] = React.useState(0)
   const [productCategory, setProductCategory] = React.useState(0)
   const [category, setCategory] = React.useState([])
+  const [selectedImage, setSelectedImage] = React.useState(null);
 
   const handleChange = (event) => {
     setOrderState(event.target.value);
@@ -21,16 +23,17 @@ const ProductInfo = ({setValue, setData}) => {
 
   const handleProductForm = async (event) => {
     event.preventDefault();
-    console.log("we here");
+    console.log(selectedImage);
     const data = new FormData(event.currentTarget);
-    var body = {
-        product_id: data.get('product_id'),
-      product_name: data.get('product_name'),
-      product_price: data.get('product_price'),
-      product_category: productCategory,
-      image_link: data.get('image_link')
-    }
-    await fetch('/add_product', {method: 'POST',headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)}).then(response =>
+  
+
+    const form = new FormData();
+    form.append("product_id",  data.get('product_id'));
+    form.append("product_name", data.get('product_name'));
+    form.append("product_price", data.get('product_price'));
+    form.append("product_category", productCategory);
+    form.append("image", selectedImage);
+    await fetch('/add_product', {method: 'POST', body: form}).then(response =>
       response.text())
     .then(data1 => {
       console.log(newData);
@@ -115,16 +118,7 @@ const ProductInfo = ({setValue, setData}) => {
               })}
               </Select>
             </FormControl>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="image_link"
-              label="Image Link"
-              type="image_link"
-              id="image_link"
-              autoComplete
-            />
+            <UploadAndDisplayImage selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
             <Button
               type="submit"
               fullWidth

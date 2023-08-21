@@ -1,4 +1,6 @@
 from django.shortcuts import render
+import base64
+from django.core.files.base import ContentFile
 from core.models import order_transactions, operator_code_master, product_info_master, product_category_master
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -73,13 +75,14 @@ def register(request):
 @csrf_exempt
 def add_product(request):
     if request.method == 'POST':
-        body = json.loads(request.body)
-        product_id = body['product_id']
-        product_name = body['product_name']
-        product_price = body['product_price']
-        product_category = body['product_category']
-        image_link = body['image_link']
-        new_product = product_info_master(product_id=product_id, product_name_en=product_name, product_price_en=product_price, category_name=product_category, product_image_link_dest=image_link)
+        product_id = request.POST['product_id']
+        product_name = request.POST['product_name']
+        product_price = request.POST['product_price']
+        product_category = request.POST['product_category']
+        format, imgstr = request.POST['image'].split(';base64,')
+        ext = format.split('/')[-1]
+        image = ContentFile(base64.b64decode(imgstr), name=f"uploaded_image.{ext}")
+        new_product = product_info_master(product_id=product_id, product_name_en=product_name, product_price_en=product_price, category_name=product_category, image=image)
         new_product.save()
         return HttpResponse(True)
 
