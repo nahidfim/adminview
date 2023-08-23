@@ -31,6 +31,9 @@ const KitchenHome = ({ setValue }) => {
   const handleProductInfoScreen = (e) => {
     setValue(6);
   }
+  const handleCategoryMaster = (e) => {
+    setValue(7);
+  }
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.firstBox}>
@@ -74,6 +77,13 @@ const KitchenHome = ({ setValue }) => {
             onClick={handleProductInfoScreen}
           >
             Product Info Screen
+          </Button>
+          <Button
+            variant="large"
+            className={styles.lightblueButton}
+            onClick={handleCategoryMaster}
+          >
+            CategoryMaster
           </Button>
         </Box>
       </Box>

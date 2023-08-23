@@ -16,9 +16,11 @@ class order_transactions(models.Model):
     order_time = models.TimeField(default=datetime.datetime.utcnow())
     provider_operator_code = models.CharField(max_length=30)
     provision_completion_flag = models.BooleanField(default=False)
-    delivery_completion_time = models.TimeField(default=datetime.datetime.utcnow())
+    delivery_completion_time = models.TimeField(
+        default=datetime.datetime.utcnow())
     order_cancellation_flag = models.BooleanField(default=False)
-    order_cancellation_time = models.TimeField(default=datetime.datetime.utcnow())
+    order_cancellation_time = models.TimeField(
+        default=datetime.datetime.utcnow())
 
 
 class company_master(models.Model):

@@ -9,6 +9,7 @@ import DeliveryConfirmationScreen from "./screens/DeliveryConfirmationScreen/Del
 import SignInSide from "./screens/LoginAndRegister/Login";
 import SignUp from "./screens/LoginAndRegister/Register";
 import ProductInfo from "./screens/ProductInfo/ProductInfo";
+import CategoryMaster from "./screens/CategoryMaster/CategoryMaster";
 
 function App() {
   const [value, setValue] = useState(0);
@@ -41,6 +42,7 @@ function App() {
         <Tab label="LoginScreen"/>
         <Tab label="SignupScreen"/>
         <Tab label="ProductInfoScreen"/>
+        <Tab label="CategoryMaster"/>
       </Tabs>
       <TabPanel value={value} index={0} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
@@ -69,6 +71,10 @@ function App() {
       <TabPanel value={value} index={6} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <ProductInfo setValue={setValue} data={data}/>
+      </TabPanel>
+      <TabPanel value={value} index={7} sx={{ minWidth: "100%" }}>
+        {/* Your content for Tab 1 goes here */}
+        <CategoryMaster setValue={setValue} data={data}/>
       </TabPanel>
 
       <Box sx={{ p: 3 }}>{/* Your content goes here */}</Box>

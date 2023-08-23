@@ -27,6 +27,7 @@ const ViewOrder = ({setValue, setData}) => {
     }).then((data) => {
       console.log(data);
       setTableData(data);
+      return data
     });
 
   }, [orderState]);

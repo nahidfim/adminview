@@ -1,6 +1,6 @@
 import React from 'react'
 import ProductSpanningTable from "../../components/ProductSpanningTable";
-import { Box, InputLabel,FormControl,Select,MenuItem,Button, TextField} from '@mui/material';
+import { Box, InputLabel,FormControl,Select,MenuItem,Button, TextField,ButtonGroup} from '@mui/material';
 import styles from "./ProductInfo.module.css";
 import UploadAndDisplayImage from '../../components/UploadAndDisplayImage';
 
@@ -12,7 +12,7 @@ const ProductInfo = ({setValue, setData}) => {
   const [productCategory, setProductCategory] = React.useState(0)
   const [category, setCategory] = React.useState([])
   const [selectedImage, setSelectedImage] = React.useState(null);
-
+  const [page, setPage] = React.useState(1)
   const handleChange = (event) => {
     setOrderState(event.target.value);
   };
@@ -128,6 +128,33 @@ const ProductInfo = ({setValue, setData}) => {
               Add Product Data
             </Button>
   </Box>
+  <ButtonGroup
+          aria-label="horizontal contained button group"
+          variant="contained"
+        >
+          <Button key="Back"  className={styles.blueButton} onClick={() => { return page > 1 ? setPage(page - 1) : null }}>Back</Button>
+          <Button key="page" className={styles.brownButton}>
+            <Box sx={{ color: "black", padding: "10px" }}>
+              {page}/5
+            </Box></Button>
+          <Button key="Go" className={styles.blueButton} onClick={() => { return page < 5 ? setPage(page + 1) : null }}>Go</Button>
+
+          {/* <Button key="orderHistory" className={styles.yellowButton} onClick={() => setValue(5)}>
+          Order History
+          </Button>
+          <Box sx={{color: "white",  padding:"10px"}}></Box>
+          <Button key="staffCall" className={styles.lightgreenButton} onClick={() => setValue(6)}>
+          Staff Call
+          </Button>
+          <Box sx={{color: "white",  padding:"10px"}}></Box>
+          <Button
+            variant="large"
+            className={styles.redButton}
+            onClick={handleCheckout}
+          >
+            Checkout
+          </Button> */}
+        </ButtonGroup>
     </Box>
     <ProductSpanningTable tableData={tableData} setValue={setValue} setData={setData} />
  </Box>
