@@ -16,21 +16,19 @@ def front(request):
     return render(request, "index.html", context)
 
 
-@login_required
 def get_order_transactions(request, data_flag):
     if request.method == "GET":
         if data_flag == "all":
             data = order_transactions.objects.filter(
-                product_code=1).filter(order_status="active").values()
+                product_code=1).filter(status="active").values()
             print(data)
         else:
             data = order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(
-                order_cancellation_flag=False).filter(order_status="active").values()
+                order_cancellation_flag=False).filter(status="active").values()
         return JsonResponse(list(data), safe=False)
 
 
 @csrf_exempt
-@login_required
 def change_status(request, order_id):
     if request.method == "GET":
         row = order_transactions.objects.filter(
@@ -39,7 +37,6 @@ def change_status(request, order_id):
 
 
 @csrf_exempt
-@login_required
 def cancel_order(request, order_id):
     if request.method == "GET":
         row = order_transactions.objects.filter(
@@ -88,12 +85,9 @@ def add_product(request):
         product_name = request.POST['product_name']
         product_price = request.POST['product_price']
         product_category = request.POST['product_category']
-        format, imgstr = request.POST['image'].split(';base64,')
-        ext = format.split('/')[-1]
-        image = ContentFile(base64.b64decode(imgstr),
-                            name="uploaded_image." + {ext})
+        image = request.POST['image']
         new_product = product_info_master(product_id=product_id, product_name_en=product_name,
-                                          product_price_en=product_price, category_name=product_category, image=image)
+                                          product_price_en=product_price, category_name=product_category, product_image_link_dest=image)
         new_product.save()
         return HttpResponse(True)
 
