@@ -33,7 +33,7 @@ const ProductInfo = ({setValue, setData}) => {
     form.append("product_price", data.get('product_price'));
     form.append("product_category", productCategory);
     form.append("image", selectedImage);
-    await fetch('/add_product', {method: 'POST', body: form}).then(response =>
+    await fetch('/add_product', {method: 'POST',  body: form}).then(response =>
       response.text())
     .then(data1 => {
       console.log(newData);

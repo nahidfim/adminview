@@ -1,7 +1,7 @@
 import React from 'react'
 
 const UploadAndDisplayImage = ({selectedImage, setSelectedImage}) => {
-    
+    const [imageBase64, setImageBase64] = React.useState(null)
 
     return (
       <div>
@@ -26,10 +26,12 @@ const UploadAndDisplayImage = ({selectedImage, setSelectedImage}) => {
           type="file"
           name="myImage"
           onChange={(event) => {
-            console.log(event.target.files[0]);
-            let reader = new FileReader() 
-            setSelectedImage(reader.readAsDataURL(event.target.files[0]));
-          }}
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            setSelectedImage(reader.readAsDataURL(file))
+    
+        }
+    }
         />
       </div>
     );

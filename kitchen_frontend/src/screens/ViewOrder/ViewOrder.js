@@ -15,6 +15,7 @@ const ViewOrder = ({setValue, setData}) => {
     setValue(3);
   };
   React.useEffect(() => {
+    const fetchData = async () => {
     var ext = ""
     if(orderState==0){
       ext = 'else'
@@ -22,14 +23,12 @@ const ViewOrder = ({setValue, setData}) => {
     else{
       ext = 'all'
     }
-    fetch('get_order_transactions/' + ext).then((response) => { 
-      return response.json(); 
-    }).then((data) => {
-      console.log(data);
-      setTableData(data);
-      return data
-    });
-
+    const response = await fetch('get_order_transactions/' + ext)
+    const data = await response.json();
+    setTableData(data);
+  }
+  
+  fetchData();
   }, [orderState]);
   return (
     <Box className={styles.outermostBox}>

@@ -10,6 +10,7 @@ import SignInSide from "./screens/LoginAndRegister/Login";
 import SignUp from "./screens/LoginAndRegister/Register";
 import ProductInfo from "./screens/ProductInfo/ProductInfo";
 import CategoryMaster from "./screens/CategoryMaster/CategoryMaster";
+import "./i18n.js";
 
 function App() {
   const [value, setValue] = useState(0);

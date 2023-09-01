@@ -9,11 +9,19 @@ import {
 } from "@mui/material";
 import styles from "./KitchenHome.module.css";
 import kitchen from "../../static/Images/kitchen.jpg";
+import { useTranslation } from 'react-i18next'
+import i18next from "i18next";
 
 
 const KitchenHome = ({ setValue }) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
-  const [language, setLanguage] = React.useState("English")
+  const [language, setLanguage] = React.useState(i18next.language);
+
+  // It is a hook imported from 'react-i18next'
+  const { t } = useTranslation();
+
+  // This function put query that helps to
+  // change the language
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
@@ -22,7 +30,9 @@ const KitchenHome = ({ setValue }) => {
   };
   
   const handleLanguageChange = (e) => {
-    setLanguage(e.target.value)
+    setLanguage(e.target.value);
+    let loc = "http://localhost:8000/";
+    window.location.replace(loc + "?lng=" + e.target.value);
   }
 
   const handleLoginAndRegisterScreen = (e) => {
@@ -42,7 +52,7 @@ const KitchenHome = ({ setValue }) => {
       
       </Box>
       <Box className={styles.secondBox}>
-        <Button key="language" className={styles.redButton}>Language
+        <Button key="language" className={styles.redButton}>{t('language')}
         <Select
     labelId="demo-simple-select-label"
     id="demo-simple-select"
@@ -51,9 +61,9 @@ const KitchenHome = ({ setValue }) => {
     onChange={handleLanguageChange}
     sx={{backgroundColor:"white"}}
   >
-    <MenuItem value={"English"}>English</MenuItem>
-    <MenuItem value={"Chinese"}>Chinese</MenuItem>
-    <MenuItem value={"Japanese"}>Japanese</MenuItem>
+    <MenuItem value={"en"}>{t('language_1')}</MenuItem>
+    <MenuItem value={"zh"}>{t('language_2')}</MenuItem>
+    <MenuItem value={"ja"}>{t('language_3')}</MenuItem>
   </Select>
         </Button>
         <Box className={styles.buttonGroup}>
@@ -62,28 +72,28 @@ const KitchenHome = ({ setValue }) => {
             className={styles.lightblueButton}
             onClick={handleOrderConfirmationScreen}
           >
-            Order Confirmation Screen
+            {t('kitchen_option_1')}
           </Button>
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleLoginAndRegisterScreen}
           >
-            Login And Register Screen
+           {t('kitchen_option_2')}
           </Button>
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleProductInfoScreen}
           >
-            Product Info Screen
+            {t('kitchen_option_3')}
           </Button>
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleCategoryMaster}
           >
-            CategoryMaster
+            {t('kitchen_option_4')}
           </Button>
         </Box>
       </Box>
