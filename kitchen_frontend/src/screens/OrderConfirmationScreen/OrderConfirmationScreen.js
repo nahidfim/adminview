@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import styles from "./OrderConfirmationScreen.module.css";
 
-const OrderConfirmationScreen = ({ setValue }) => {
+const OrderConfirmationScreen = ({ setValue, t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
 
@@ -37,14 +37,14 @@ const OrderConfirmationScreen = ({ setValue }) => {
       <Box className={styles.ButtonGroup}>
      
       <Box className={styles.secondBox}>
-      <Typography variant="h5"> Operater Code :{code}</Typography>
-      <Typography variant="h5"> Lan No. :5</Typography>
+      <Typography variant="h5"> {t('operator_code')} : {code}</Typography>
+      <Typography variant="h5"> {t('lan_no')} : 5</Typography>
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleViewOrder}
           >
-            Order Confirmation Screen
+            {t('kitchen_option_1')}
           </Button>
          
         </Box>
@@ -55,7 +55,7 @@ const OrderConfirmationScreen = ({ setValue }) => {
             className={styles.lightblueButton}
             onClick={handleDeliveryConfirmationScreen}
           >
-            Done
+            {t('done')}
           </Button>
         </Box>
         </Box>

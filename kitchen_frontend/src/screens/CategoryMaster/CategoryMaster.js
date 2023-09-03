@@ -6,7 +6,7 @@ import styles from "./CategoryMaster.module.css";
 import UploadAndDisplayImage from '../../components/UploadAndDisplayImage';
 import Grid from '@mui/material/Grid';
 
-const CategoryMaster = ({setValue, setData}) => {
+const CategoryMaster = ({setValue, setData, t}) => {
   const [tableData, setTableData] = React.useState([])
   const [orderState, setOrderState] = React.useState(0)
   const [newData, setNewData] = React.useState(0)
@@ -67,7 +67,7 @@ const CategoryMaster = ({setValue, setData}) => {
               required
               fullWidth
               id="product_category_no"
-              label="product_category_no"
+              label={t("product_category_no")}
               name="product_category_no"
               type="number"
               autoComplete="product_category_no"
@@ -81,7 +81,7 @@ const CategoryMaster = ({setValue, setData}) => {
               required
               fullWidth
               name="product_category"
-              label="product_category Name"
+              label={t('product_category')}
               type="product_category"
               id="product_category"
               autoComplete="product_category"
@@ -93,7 +93,7 @@ const CategoryMaster = ({setValue, setData}) => {
               required
               fullWidth
               name="product_category_name_en"
-              label="product_category_name_en Price"
+              label={t("product_category_name_en")}
               type="product_category_name_en"
               id="product_category_name_en"
               autoComplete="product_category_name_en"
@@ -118,11 +118,11 @@ const CategoryMaster = ({setValue, setData}) => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Add category
+              {t('add_category')}
             </Button>
   </Box>
     </Box>
-    <CategoryTable tableData={tableData} setValue={setValue} setData={setData} />
+    <CategoryTable tableData={tableData} setValue={setValue} setData={setData} t={t}/>
  </Box>
      
   )

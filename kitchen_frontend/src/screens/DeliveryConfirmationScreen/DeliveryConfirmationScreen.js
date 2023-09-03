@@ -10,7 +10,7 @@ import {
 import styles from "./DeliveryConfirmationScreen.module.css";
 import image from "../../static/Images/nigiri3.jpg";
 
-const DeliveryConfirmationScreen = ({ setValue , data}) => {
+const DeliveryConfirmationScreen = ({ setValue , data, t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [language, setLanguage] = React.useState("English")
   const handleListItemClick = (event, index) => {
@@ -27,10 +27,10 @@ const DeliveryConfirmationScreen = ({ setValue , data}) => {
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.tableNumber}>
-      <Typography variant="h5"> Lan No. : {data.lane_no}</Typography>
-      <Typography variant="h5"> Table No. : {data.table_no}</Typography>
-      <Typography variant="h5"> Product code : {data.product_code}</Typography>
-      <Typography variant="h5"> Quantity : {data.order_amount}</Typography>
+      <Typography variant="h5"> {t('lan_no')}. : {data.lane_no}</Typography>
+      <Typography variant="h5"> {t('table_no')}. : {data.table_no}</Typography>
+      <Typography variant="h5"> {t('product_code')} : {data.product_code}</Typography>
+      <Typography variant="h5"> {t('quantity')} : {data.order_amount}</Typography>
      
       <Box className={styles.firstBox}> 
       <img src={image} alt="img"/>
@@ -45,14 +45,14 @@ const DeliveryConfirmationScreen = ({ setValue , data}) => {
             className={styles.lightgreenButton}
             onClick={handleViewOrder}
           >
-            Update/View Order
+            {t('update')}
           </Button>
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleViewOrder}
           >
-           No
+           {t('no')}
           </Button>
          
          

@@ -30,7 +30,7 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignInSide({setValue, data}) {
+export default function SignInSide({setValue, data, t}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -68,7 +68,7 @@ else{
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            {t('sign_in')}
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -76,7 +76,7 @@ else{
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label={t("email_address")}
               name="email"
               autoComplete="email"
               autoFocus
@@ -86,7 +86,7 @@ else{
               required
               fullWidth
               name="password"
-              label="Password"
+              label={t("password")}
               type="password"
               id="password"
               autoComplete="current-password"
@@ -101,17 +101,17 @@ else{
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+               {t('sign_in')}
             </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  {t('forgot_password')}
                 </Link>
               </Grid>
               <Grid item>
                 <Link onClick={handleSignup} variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {t("dont")}
                 </Link>
               </Grid>
             </Grid>

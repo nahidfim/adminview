@@ -5,12 +5,13 @@ import { Box, InputLabel,FormControl,Select,MenuItem,Button} from '@mui/material
 import styles from "./ViewOrder.module.css";
 
 
-const ViewOrder = ({setValue, setData}) => {
+const ViewOrder = ({setValue, setData, t}) => {
   const [tableData, setTableData] = React.useState([])
   const [orderState, setOrderState] = React.useState(0)
   const handleChange = (event) => {
     setOrderState(event.target.value);
   };
+
   const handleDeliveryConfirmationScreen = () => {
     setValue(3);
   };
@@ -41,12 +42,12 @@ const ViewOrder = ({setValue, setData}) => {
     label="Undeliverd Order"
     onChange={handleChange}
   >
-    <MenuItem value={0}>Undelivered Order</MenuItem>
-    <MenuItem value={1}>Total Order</MenuItem>
+    <MenuItem value={0}>{t('undelivered')}</MenuItem>
+    <MenuItem value={1}>{t('total_order')}</MenuItem>
   </Select>
   </FormControl>
     </Box>
-    <SpanningTable tableData={tableData} setValue={setValue} setData={setData} />
+    <SpanningTable tableData={tableData} setValue={setValue} setData={setData} t={t}/>
  </Box>
      
   )

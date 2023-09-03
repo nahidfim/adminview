@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import { Button} from '@mui/base';
 import React, {useState} from "react"; 
 
-const SpanningTable = ({tableData, setValue, setData}) => {
+const SpanningTable = ({tableData, setValue, setData, t}) => {
     const handleDeliveryConfirmationScreen = (item) => {
       console.log(item);
         setData(item);
@@ -24,14 +24,14 @@ const SpanningTable = ({tableData, setValue, setData}) => {
       <Table sx={{ minWidth: 700 }} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">No.</TableCell>
-            <TableCell align="right">Order No.</TableCell>
-            <TableCell align="right">Product Code</TableCell>
-            <TableCell align="right">Lan No.</TableCell>
-            <TableCell align="right">Tablet No.</TableCell>
-            <TableCell align="right">Order Time.</TableCell>
-            <TableCell align="right">Qty.</TableCell>
-            <TableCell align="right">Offer</TableCell>
+            <TableCell align="right">{t('no')}.</TableCell>
+            <TableCell align="right">{t('order_no')}.</TableCell>
+            <TableCell align="right">{t('product_code')}</TableCell>
+            <TableCell align="right">{t('lan_no')}.</TableCell>
+            <TableCell align="right">{t('tablet_no')}.</TableCell>
+            <TableCell align="right">{t('prder_time')}.</TableCell>
+            <TableCell align="right">{t('qty')}.</TableCell>
+            <TableCell align="right">{t('offer')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

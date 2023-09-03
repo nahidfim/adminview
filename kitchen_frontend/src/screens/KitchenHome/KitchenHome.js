@@ -9,16 +9,16 @@ import {
 } from "@mui/material";
 import styles from "./KitchenHome.module.css";
 import kitchen from "../../static/Images/kitchen.jpg";
-import { useTranslation } from 'react-i18next'
+
 import i18next from "i18next";
 
 
-const KitchenHome = ({ setValue }) => {
+const KitchenHome = ({ setValue , t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [language, setLanguage] = React.useState(i18next.language);
 
   // It is a hook imported from 'react-i18next'
-  const { t } = useTranslation();
+  
 
   // This function put query that helps to
   // change the language

@@ -5,7 +5,7 @@ import styles from "./ProductInfo.module.css";
 import UploadAndDisplayImage from '../../components/UploadAndDisplayImage';
 
 
-const ProductInfo = ({setValue, setData}) => {
+const ProductInfo = ({setValue, setData, t}) => {
   const [tableData, setTableData] = React.useState([])
   const [orderState, setOrderState] = React.useState(0)
   const [newData, setNewData] = React.useState(0)
@@ -79,7 +79,7 @@ const ProductInfo = ({setValue, setData}) => {
               required
               fullWidth
               id="product_id"
-              label="Product ID"
+              label={t('product_id')}
               name="product_id"
               type="number"
               autoComplete="product_id"
@@ -90,7 +90,7 @@ const ProductInfo = ({setValue, setData}) => {
               required
               fullWidth
               name="product_name"
-              label="Product Name"
+              label={t('product_name')}
               type="product_name"
               id="product_name"
               autoComplete
@@ -100,13 +100,13 @@ const ProductInfo = ({setValue, setData}) => {
               required
               fullWidth
               name="product_price"
-              label="Product Price"
+              label={t('product_price')}
               type="product_price"
               id="product_price"
               autoComplete
             />
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Product category</InputLabel>
+              <InputLabel id="demo-simple-select-label">{t('product_category')}</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -125,19 +125,19 @@ const ProductInfo = ({setValue, setData}) => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Add Product Data
+              {t('add_product')}
             </Button>
   </Box>
   <ButtonGroup
           aria-label="horizontal contained button group"
           variant="contained"
         >
-          <Button key="Back"  className={styles.blueButton} onClick={() => { return page > 1 ? setPage(page - 1) : null }}>Back</Button>
+          <Button key="Back"  className={styles.blueButton} onClick={() => { return page > 1 ? setPage(page - 1) : null }}>{t('back')}</Button>
           <Button key="page" className={styles.brownButton}>
             <Box sx={{ color: "black", padding: "10px" }}>
               {page}/5
             </Box></Button>
-          <Button key="Go" className={styles.blueButton} onClick={() => { return page < 5 ? setPage(page + 1) : null }}>Go</Button>
+          <Button key="Go" className={styles.blueButton} onClick={() => { return page < 5 ? setPage(page + 1) : null }}>{t('go')}</Button>
 
           {/* <Button key="orderHistory" className={styles.yellowButton} onClick={() => setValue(5)}>
           Order History
@@ -156,7 +156,7 @@ const ProductInfo = ({setValue, setData}) => {
           </Button> */}
         </ButtonGroup>
     </Box>
-    <ProductSpanningTable tableData={tableData} setValue={setValue} setData={setData} />
+    <ProductSpanningTable tableData={tableData} setValue={setValue} setData={setData} t={t}/>
  </Box>
      
   )

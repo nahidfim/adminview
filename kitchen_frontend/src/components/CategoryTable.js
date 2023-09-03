@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import { Button} from '@mui/base';
 import React, {useState} from "react"; 
 
-const CategoryTable = ({tableData, setValue, setData}) => {
+const CategoryTable = ({tableData, setValue, setData, t}) => {
     const handleDeliveryConfirmationScreen = (item) => {
       console.log(item);
         setData(item);
@@ -24,11 +24,11 @@ const CategoryTable = ({tableData, setValue, setData}) => {
       <Table sx={{ minWidth: 700 }} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Produc Category No</TableCell>
-            <TableCell align="right">Product Category</TableCell>
-            <TableCell align="right">Product Category Name EN</TableCell>
-            <TableCell align="right">Product Category Name JP</TableCell>
-            <TableCell align="right">Product Category Name CH</TableCell>
+            <TableCell align="right">{t('product_category_no')}</TableCell>
+            <TableCell align="right">{t('product_category')}</TableCell>
+            <TableCell align="right">{t('product_category_name_en')}</TableCell>
+            <TableCell align="right">{t('product_category_name_jp')}</TableCell>
+            <TableCell align="right">{t('product_category_name_ch')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

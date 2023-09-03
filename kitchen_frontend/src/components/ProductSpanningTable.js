@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import { Button} from '@mui/base';
 import React, {useState} from "react"; 
 
-const ProductSpanningTable = ({tableData, setValue, setData}) => {
+const ProductSpanningTable = ({tableData, setValue, setData, t}) => {
     const handleDeliveryConfirmationScreen = (item) => {
       console.log(item);
         setData(item);
@@ -24,11 +24,11 @@ const ProductSpanningTable = ({tableData, setValue, setData}) => {
       <Table sx={{ minWidth: 700 }} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">No.</TableCell>
-            <TableCell align="right">Product ID</TableCell>
-            <TableCell align="right">Product Name</TableCell>
-            <TableCell align="right">Product Price</TableCell>
-            <TableCell align="right">Product Category</TableCell>
+            <TableCell align="right">{t('no')}.</TableCell>
+            <TableCell align="right">{t('product_id')}</TableCell>
+            <TableCell align="right">{t('product_name')}</TableCell>
+            <TableCell align="right">{t('product_price')}</TableCell>
+            <TableCell align="right">{t('product_category')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
