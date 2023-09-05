@@ -25,9 +25,6 @@ const KitchenHome = ({ setValue , t}) => {
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
-  const handleOrderConfirmationScreen = () => {
-    setValue(1);
-  };
   
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
@@ -38,12 +35,7 @@ const KitchenHome = ({ setValue , t}) => {
   const handleLoginAndRegisterScreen = (e) => {
     setValue(4);
   }
-  const handleProductInfoScreen = (e) => {
-    setValue(6);
-  }
-  const handleCategoryMaster = (e) => {
-    setValue(7);
-  }
+
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.firstBox}>
@@ -61,39 +53,20 @@ const KitchenHome = ({ setValue , t}) => {
     onChange={handleLanguageChange}
     sx={{backgroundColor:"white"}}
   >
-    <MenuItem value={"en"}>{t('language_1')}</MenuItem>
-    <MenuItem value={"zh"}>{t('language_2')}</MenuItem>
-    <MenuItem value={"ja"}>{t('language_3')}</MenuItem>
+            <MenuItem value={"en"}>{t('language_1')}</MenuItem>
+            <MenuItem value={"ja"}>{t('language_3')}</MenuItem>
+            <MenuItem value={"zh"}>{t('language_2')}</MenuItem>
+    
   </Select>
         </Button>
         <Box className={styles.buttonGroup}>
-          <Button
-            variant="large"
-            className={styles.lightblueButton}
-            onClick={handleOrderConfirmationScreen}
-          >
-            {t('kitchen_option_1')}
-          </Button>
+    
           <Button
             variant="large"
             className={styles.lightblueButton}
             onClick={handleLoginAndRegisterScreen}
           >
-           {t('kitchen_option_2')}
-          </Button>
-          <Button
-            variant="large"
-            className={styles.lightblueButton}
-            onClick={handleProductInfoScreen}
-          >
-            {t('kitchen_option_3')}
-          </Button>
-          <Button
-            variant="large"
-            className={styles.lightblueButton}
-            onClick={handleCategoryMaster}
-          >
-            {t('kitchen_option_4')}
+           {t('kitchen_option_1')}
           </Button>
         </Box>
       </Box>

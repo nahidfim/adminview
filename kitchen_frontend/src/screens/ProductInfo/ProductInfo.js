@@ -128,33 +128,6 @@ const ProductInfo = ({setValue, setData, t}) => {
               {t('add_product')}
             </Button>
   </Box>
-  <ButtonGroup
-          aria-label="horizontal contained button group"
-          variant="contained"
-        >
-          <Button key="Back"  className={styles.blueButton} onClick={() => { return page > 1 ? setPage(page - 1) : null }}>{t('back')}</Button>
-          <Button key="page" className={styles.brownButton}>
-            <Box sx={{ color: "black", padding: "10px" }}>
-              {page}/5
-            </Box></Button>
-          <Button key="Go" className={styles.blueButton} onClick={() => { return page < 5 ? setPage(page + 1) : null }}>{t('go')}</Button>
-
-          {/* <Button key="orderHistory" className={styles.yellowButton} onClick={() => setValue(5)}>
-          Order History
-          </Button>
-          <Box sx={{color: "white",  padding:"10px"}}></Box>
-          <Button key="staffCall" className={styles.lightgreenButton} onClick={() => setValue(6)}>
-          Staff Call
-          </Button>
-          <Box sx={{color: "white",  padding:"10px"}}></Box>
-          <Button
-            variant="large"
-            className={styles.redButton}
-            onClick={handleCheckout}
-          >
-            Checkout
-          </Button> */}
-        </ButtonGroup>
     </Box>
     <ProductSpanningTable tableData={tableData} setValue={setValue} setData={setData} t={t}/>
  </Box>

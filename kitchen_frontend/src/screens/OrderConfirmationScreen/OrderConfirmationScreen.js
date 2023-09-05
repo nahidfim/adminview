@@ -18,8 +18,15 @@ const OrderConfirmationScreen = ({ setValue, t}) => {
     setValue(2);
   };
   const handleDeliveryConfirmationScreen = () => {
-    setValue(3);
+    setValue(4);
   };
+
+  const handleProductInfoScreen = (e) => {
+    setValue(6);
+  }
+  const handleCategoryMaster = (e) => {
+    setValue(7);
+  }
 
   React.useEffect(() => {
     fetch('/get_operator').then((response) => {
@@ -38,13 +45,29 @@ const OrderConfirmationScreen = ({ setValue, t}) => {
      
       <Box className={styles.secondBox}>
       <Typography variant="h5"> {t('operator_code')} : {code}</Typography>
-      <Typography variant="h5"> {t('lan_no')} : 5</Typography>
+      {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
           <Button
             variant="large"
-            className={styles.lightblueButton}
+            className={styles.lightgreenButton}
             onClick={handleViewOrder}
           >
-            {t('kitchen_option_1')}
+            {t('kitchen_option_2')}
+          </Button>
+
+     
+          <Button
+            variant="large"
+            className={styles.redButton}
+            onClick={handleProductInfoScreen}
+          >
+            {t('kitchen_option_3')}
+          </Button>
+          <Button
+            variant="large"
+            className={styles.redButton}
+            onClick={handleCategoryMaster}
+          >
+            {t('kitchen_option_４')}
           </Button>
          
         </Box>
@@ -52,7 +75,7 @@ const OrderConfirmationScreen = ({ setValue, t}) => {
         <Box className={styles.thirdbox}>
         <Button
             variant="large"
-            className={styles.lightblueButton}
+            className={styles.redButton}
             onClick={handleDeliveryConfirmationScreen}
           >
             {t('done')}

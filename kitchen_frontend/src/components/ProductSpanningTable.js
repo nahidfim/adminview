@@ -24,7 +24,7 @@ const ProductSpanningTable = ({tableData, setValue, setData, t}) => {
       <Table sx={{ minWidth: 700 }} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">{t('no')}.</TableCell>
+          
             <TableCell align="right">{t('product_id')}</TableCell>
             <TableCell align="right">{t('product_name')}</TableCell>
             <TableCell align="right">{t('product_price')}</TableCell>

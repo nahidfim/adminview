@@ -13,7 +13,7 @@ const ViewOrder = ({setValue, setData, t}) => {
   };
 
   const handleDeliveryConfirmationScreen = () => {
-    setValue(3);
+    setValue(1);
   };
   React.useEffect(() => {
     const fetchData = async () => {
@@ -46,9 +46,20 @@ const ViewOrder = ({setValue, setData, t}) => {
     <MenuItem value={1}>{t('total_order')}</MenuItem>
   </Select>
   </FormControl>
-    </Box>
-    <SpanningTable tableData={tableData} setValue={setValue} setData={setData} t={t}/>
- </Box>
+      </Box>
+      
+      <SpanningTable tableData={tableData} setValue={setValue} setData={setData} t={t} />
+     
+  
+    <Button
+      variant="large"
+      className={styles.lightgreenButton}
+      onClick={handleDeliveryConfirmationScreen}
+    >
+     {t('kitchen_option_2')}
+    </Button>
+  </Box>
+
      
   )
 }

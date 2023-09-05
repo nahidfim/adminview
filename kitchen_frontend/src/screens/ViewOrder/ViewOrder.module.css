@@ -15,3 +15,19 @@
    width: 200px;
     margin-right: 900px;
 }
+.lightgreenButton{
+    color: white!important;
+    background-color:rgb(0, 166, 94)!important;
+    width: 200px!important;
+    padding:30px!important;
+    display: flex;
+    flex-direction: column;
+}
+.redButton{
+    color: white!important;
+    background-color:red!important;
+    width: 200px!important;
+    padding:30px!important;
+    display: flex;
+    flex-direction: column;
+}

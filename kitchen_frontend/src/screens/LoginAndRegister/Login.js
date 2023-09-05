@@ -12,13 +12,16 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next'
+
 
 function Copyright(props) {
+  const { t } = useTranslation();
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="">
+        {t('sushi_order_system')}
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -35,18 +38,19 @@ export default function SignInSide({setValue, data, t}) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     var body = {
-        username: data.get('email'),
-      password: data.get('password'),
+        operator_code: data.get('operator_code'),
+        operator_password: data.get('operator_password'),
+     
     }
     await fetch('/login', {method: 'POST',headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)}).then(response =>
       response.text())
     .then(data => {
       console.log(data);
       if(data=='True'){
-        setValue(2);
+        setValue(1);
     }
 else{
-    setValue(4);
+    setValue(2);
 }});
   };
   const handleSignup = () => {
@@ -75,26 +79,26 @@ else{
               margin="normal"
               required
               fullWidth
-              id="email"
-              label={t("email_address")}
-              name="email"
-              autoComplete="email"
+              id="operator_code"
+              label={t("operator_code")}
+              name="operator_code"
+              autoComplete="operator_code"
               autoFocus
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
-              label={t("password")}
+              name="operator_password"
+              label={t("operator_password")}
               type="password"
-              id="password"
+              id="operator_password"
               autoComplete="current-password"
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
@@ -104,14 +108,14 @@ else{
                {t('sign_in')}
             </Button>
             <Grid container>
-              <Grid item xs>
+              {/* <Grid item xs>
                 <Link href="#" variant="body2">
                   {t('forgot_password')}
                 </Link>
-              </Grid>
+              </Grid> */}
               <Grid item>
                 <Link onClick={handleSignup} variant="body2">
-                  {t("dont")}
+                  {t("Don't_have_an_operator_code")}
                 </Link>
               </Grid>
             </Grid>

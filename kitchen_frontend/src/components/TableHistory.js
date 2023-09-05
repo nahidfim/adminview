@@ -24,20 +24,20 @@ const SpanningTable = ({tableData, setValue, setData, t}) => {
       <Table sx={{ minWidth: 700 }} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">{t('no')}.</TableCell>
+          
             <TableCell align="right">{t('order_no')}.</TableCell>
             <TableCell align="right">{t('product_code')}</TableCell>
-            <TableCell align="right">{t('lan_no')}.</TableCell>
-            <TableCell align="right">{t('tablet_no')}.</TableCell>
-            <TableCell align="right">{t('prder_time')}.</TableCell>
-            <TableCell align="right">{t('qty')}.</TableCell>
+            <TableCell align="right">{t('lan_no')}</TableCell>
+            <TableCell align="right">{t('tablet_no')}</TableCell>
+            <TableCell align="right">{t('order_time')}</TableCell>
+            <TableCell align="right">{t('qty')}</TableCell>
             <TableCell align="right">{t('offer')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {tableData.map((item)=>
             <TableRow>
-            <TableCell align="right"> 1</TableCell>
+            
             <TableCell align="right"> {item.order_no}</TableCell>
             <TableCell align="right"> {item.product_code}</TableCell>
             <TableCell align="right"> {item.lane_no}</TableCell>
@@ -45,7 +45,7 @@ const SpanningTable = ({tableData, setValue, setData, t}) => {
             <TableCell align="right"> {item.order_time}</TableCell>
             <TableCell align="right">{item.order_amount}</TableCell>
             <TableCell align="right">
-              {item.order_status=="compeleted"? <Button >Done</Button>
+              {item.status=="compeleted"? <Button >Done</Button>
               :<Button onClick={()=>handleDeliveryConfirmationScreen(item)}>OK</Button>}
             
             </TableCell>

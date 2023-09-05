@@ -32,7 +32,7 @@ def get_order_transactions(request, data_flag):
 def change_status(request, order_id):
     if request.method == "GET":
         row = order_transactions.objects.filter(
-            order_no=order_id).update(provision_completion_flag=True, product_operator_code=request.session.get('code', ''))
+            order_no=order_id).update(provision_completion_flag=True, provider_operator_code=request.session.get('code', ''))
         return HttpResponse("Order has been updated")
 
 
@@ -48,12 +48,13 @@ def cancel_order(request, order_id):
 def login(request):
     if request.method == "POST":
         body = json.loads(request.body)
-        username = body['username']
-        password = body['password']
+        operator_code = body['operator_code']
+        operator_password = body['operator_password']
         check_user = operator_code_master.objects.filter(
-            operator_name=username).filter(operator_password=password).first()
+            operator_password=operator_password).filter(
+            operator_code=operator_code).first()
         if check_user:
-            request.session['code'] = check_user.operator_code
+            request.session['operator_code'] = check_user.operator_code
             return HttpResponse(True)
         else:
             return HttpResponse(False)
@@ -69,11 +70,11 @@ def logout(request):
 def register(request):
     if request.method == "POST":
         body = json.loads(request.body)
-        username = body['username']
+        operator_name = body['operator_name']
         password = body['password']
         operator_code = body['operator_code']
         new_user = operator_code_master(
-            operator_code=operator_code, operator_name=username, operator_password=password, last_login="")
+            operator_code=operator_code, operator_name=operator_name, operator_password=password, last_login="")
         new_user.save()
         return HttpResponse(True)
 

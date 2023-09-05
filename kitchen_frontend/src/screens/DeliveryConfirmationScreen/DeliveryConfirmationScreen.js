@@ -23,14 +23,17 @@ const DeliveryConfirmationScreen = ({ setValue , data, t}) => {
     });
     setValue(2);
   };
+  const handleBackViewOrder = () => {
+    setValue(2);
+  };
 
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.tableNumber}>
-      <Typography variant="h5"> {t('lan_no')}. : {data.lane_no}</Typography>
-      <Typography variant="h5"> {t('table_no')}. : {data.table_no}</Typography>
+      <Typography variant="h5"> {t('lan_no')} : {data.lane_no}</Typography>
+      <Typography variant="h5"> {t('table_no')} : {data.table_no}</Typography>
       <Typography variant="h5"> {t('product_code')} : {data.product_code}</Typography>
-      <Typography variant="h5"> {t('quantity')} : {data.order_amount}</Typography>
+      <Typography variant="h5"> {t('qty')} : {data.order_amount}</Typography>
      
       <Box className={styles.firstBox}> 
       <img src={image} alt="img"/>
@@ -50,7 +53,7 @@ const DeliveryConfirmationScreen = ({ setValue , data, t}) => {
           <Button
             variant="large"
             className={styles.lightblueButton}
-            onClick={handleViewOrder}
+            onClick={handleBackViewOrder}
           >
            {t('no')}
           </Button>

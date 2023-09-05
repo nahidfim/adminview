@@ -12,13 +12,15 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next'
 
 function Copyright(props) {
+  const { t } = useTranslation();
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="">
+      {t('sushi_order_system')}
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -40,7 +42,7 @@ export default function SignUp({setValue, t}) {
         'Content-Type': 'application/json'
       }, body: JSON.stringify(
         {
-            username: data.get('email'),
+            operator_name: data.get('email'),
             password: data.get('password'),
             operator_code: data.get('operator_code')
           }
@@ -56,6 +58,10 @@ else{
     setValue(5);
 }})
   };
+
+  const handleSigIn = () => {
+    setValue(4);
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -91,22 +97,12 @@ else{
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="operator_name"
                   required
                   fullWidth
-                  id="firstName"
-                  label={t('first_name')}
+                  id="operator_name"
+                  label={t('operator_name')}
                   autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label={t('last_name')}
-                  name="lastName"
-                  autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -147,8 +143,8 @@ else{
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  {t('already')}
+                <Link onClick={handleSigIn} variant="body2">
+                  {t('Already_have_an_operatoer_code')}
                 </Link>
               </Grid>
             </Grid>
