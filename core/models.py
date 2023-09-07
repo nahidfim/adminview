@@ -6,6 +6,7 @@ import datetime
 
 class order_transactions(models.Model):
     order_no = models.CharField(max_length=100, primary_key=True)
+    product_name_en = models.CharField(max_length=30)
     lane_no = models.IntegerField(max_length=5)
     table_no = models.IntegerField(max_length=5)
     language_type = models.CharField(max_length=30)
@@ -21,6 +22,7 @@ class order_transactions(models.Model):
     order_cancellation_flag = models.BooleanField(default=False)
     order_cancellation_time = models.TimeField(
         default=datetime.datetime.utcnow())
+    product_image_link_dest = models.TextField(max_length=50)
 
 
 class company_master(models.Model):

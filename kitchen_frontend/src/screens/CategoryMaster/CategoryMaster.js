@@ -72,7 +72,7 @@ const CategoryMaster = ({setValue, setData, t}) => {
               type="number"
               autoComplete="product_category_no"
               autoFocus
-              value="clear input"
+             
             
             />
          

@@ -26,26 +26,30 @@ const SpanningTable = ({tableData, setValue, setData, t}) => {
           <TableRow>
           
             <TableCell align="right">{t('order_no')}.</TableCell>
+            <TableCell align="right">{t('product_name_en')}.</TableCell>
             <TableCell align="right">{t('product_code')}</TableCell>
             <TableCell align="right">{t('lan_no')}</TableCell>
             <TableCell align="right">{t('tablet_no')}</TableCell>
             <TableCell align="right">{t('order_time')}</TableCell>
             <TableCell align="right">{t('qty')}</TableCell>
             <TableCell align="right">{t('offer')}</TableCell>
+        
           </TableRow>
         </TableHead>
         <TableBody>
           {tableData.map((item)=>
             <TableRow>
             
-            <TableCell align="right"> {item.order_no}</TableCell>
+              <TableCell align="right"> {item.order_no}</TableCell>
+              <TableCell align="right"> {item.product_name_en}</TableCell>
             <TableCell align="right"> {item.product_code}</TableCell>
             <TableCell align="right"> {item.lane_no}</TableCell>
             <TableCell align="right"> {item.table_no}</TableCell>
             <TableCell align="right"> {item.order_time}</TableCell>
             <TableCell align="right">{item.order_amount}</TableCell>
+            
             <TableCell align="right">
-              {item.status=="compeleted"? <Button >Done</Button>
+              {item.provision_completion_flag==1? <Button >Done</Button>
               :<Button onClick={()=>handleDeliveryConfirmationScreen(item)}>OK</Button>}
             
             </TableCell>

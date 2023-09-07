@@ -62,7 +62,7 @@ function App() {
       </TabPanel>
       <TabPanel value={value} index={3} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
-        <DeliveryConfirmationScreen setValue={setValue} data={data} t={t}/>
+        <DeliveryConfirmationScreen setValue={setValue} data={data} iamge={image} t={t}/>
       </TabPanel>
       <TabPanel value={value} index={4} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}

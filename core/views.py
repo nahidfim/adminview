@@ -32,7 +32,7 @@ def get_order_transactions(request, data_flag):
 def change_status(request, order_id):
     if request.method == "GET":
         row = order_transactions.objects.filter(
-            order_no=order_id).update(provision_completion_flag=True, provider_operator_code=request.session.get('code', ''))
+            order_no=order_id).update(provision_completion_flag=True, provider_operator_code=request.session.get('operator_code', ''))
         return HttpResponse("Order has been updated")
 
 
@@ -103,7 +103,7 @@ def product_data(request):
 @csrf_exempt
 def get_operator(request):
     if request.method == 'GET':
-        return HttpResponse(request.session.get('code', ''))
+        return HttpResponse(request.session.get('operator_code', ''))
 
 
 @csrf_exempt

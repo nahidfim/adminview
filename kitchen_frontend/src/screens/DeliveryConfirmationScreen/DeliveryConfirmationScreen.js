@@ -9,10 +9,11 @@ import {
 } from "@mui/material";
 import styles from "./DeliveryConfirmationScreen.module.css";
 import image from "../../static/Images/nigiri3.jpg";
+import i18next from "i18next";
 
-const DeliveryConfirmationScreen = ({ setValue , data, t}) => {
+const DeliveryConfirmationScreen = ({ setValue , data,t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
-  const [language, setLanguage] = React.useState("English")
+  const [language, setLanguage] = React.useState(i18next.language);
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
@@ -36,7 +37,9 @@ const DeliveryConfirmationScreen = ({ setValue , data, t}) => {
       <Typography variant="h5"> {t('qty')} : {data.order_amount}</Typography>
      
       <Box className={styles.firstBox}> 
-      <img src={image} alt="img"/>
+          <img height="350px" width="400px" src={data.product_image_link_dest} alt="img" />
+          <Typography variant="h5"> {t('product_name_en')} : {data.product_name_en}</Typography>
+        
      </Box>
      
       </Box>
