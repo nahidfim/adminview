@@ -39,12 +39,14 @@ const OrderConfirmationScreen = ({ setValue, t}) => {
   }, [])
   return (
     <Container className={styles.outermostContainer}>
-     <Box className={styles.headerContent}>
-     </Box>
+    <Box className={styles.OperatorCode}>
+          <h1 variant="h5"> {t('operator_code')} : {code}</h1>
+         </Box>
+      
       <Box className={styles.ButtonGroup}>
      
-      <Box className={styles.secondBox}>
-      <Typography variant="h5"> {t('operator_code')} : {code}</Typography>
+        <Box className={styles.secondBox}>
+      
       {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
           <Button
             variant="large"
@@ -75,7 +77,7 @@ const OrderConfirmationScreen = ({ setValue, t}) => {
         <Box className={styles.thirdbox}>
         <Button
             variant="large"
-            className={styles.redButton}
+            className={styles.lightgreenButton}
             onClick={handleDeliveryConfirmationScreen}
           >
             {t('done')}

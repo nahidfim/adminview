@@ -48,7 +48,10 @@ const ViewOrder = ({setValue, setData, t}) => {
   </FormControl>
       </Box>
       
+      <Box className={styles.tableBox}>
       <SpanningTable tableData={tableData} setValue={setValue} setData={setData} t={t} />
+      </Box>
+     
      
   
     <Button
