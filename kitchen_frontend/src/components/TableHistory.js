@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button} from '@mui/base';
-import React, {useState} from "react"; 
+import React, { useState } from "react"; 
 const SpanningTable = ({tableData, setValue, setData, t}) => {
     const handleDeliveryConfirmationScreen = (item) => {
       console.log(item);
@@ -55,7 +55,7 @@ const SpanningTable = ({tableData, setValue, setData, t}) => {
             
             <TableCell align="right">
                 {item.provision_completion_flag == 1 ? <Button >{t('completed') }</Button>
-                  : <Button onClick={() => handleDeliveryConfirmationScreen(item)}>{t('incomplete')}</Button>}
+                  : <Button style = {{color:'red'}} onClick={() => handleDeliveryConfirmationScreen(item)}>{t('incomplete')}</Button>}
             
             </TableCell>
             {/* <TableCell align="right">
