@@ -93,3 +93,10 @@ class operator_code_master(models.Model):
     operator_password = models.CharField(max_length=30)
     last_login = models.CharField(max_length=30)
     registration_time = models.TimeField(default=datetime.datetime.utcnow())
+
+class admin_code_master(models.Model):
+    admin_code = models.CharField(max_length=30)
+    admin_name = models.CharField(max_length=30)
+    admin_password = models.CharField(max_length=30)
+    last_login = models.CharField(max_length=30)
+    registration_time = models.TimeField(default=datetime.datetime.utcnow())

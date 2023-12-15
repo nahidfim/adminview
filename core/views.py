@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import base64
 from django.core.files.base import ContentFile
-from core.models import order_transactions, operator_code_master, product_info_master, product_category_master
+from core.models import order_transactions, operator_code_master, admin_code_master, product_info_master, product_category_master
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -64,8 +64,7 @@ def login(request):
 def logout(request):
     if request.method == "GET":
         return HttpResponse("Order has been updated")
-
-
+    
 @csrf_exempt
 def register(request):
     if request.method == "POST":
@@ -78,7 +77,40 @@ def register(request):
         new_user.save()
         return HttpResponse(True)
 
+@csrf_exempt
+def adminlogin(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        admin_code = body['admin_code']
+        admin_password = body['admin_password']
+        check_user = admin_code_master.objects.filter(
+            admin_password=admin_password).filter(
+            admin_code=admin_code).first()
+        if check_user:
+            request.session['admin_code'] = check_user.admin_code
+            return HttpResponse(True)
+        else:
+            return HttpResponse(False)
 
+
+@csrf_exempt
+def adminlogout(request):
+    if request.method == "GET":
+        return HttpResponse("Order has been updated")
+
+
+@csrf_exempt
+def adminregister(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        admin_name = body['admin_name']
+        password = body['password']
+        admin_code = body['admin_code']
+        new_user = admin_code_master(
+            admin_code=admin_code, admin_name=admin_name, admin_password=password, last_login="")
+        new_user.save()
+        return HttpResponse(True)
+    
 @csrf_exempt
 def add_product(request):
     if request.method == 'POST':
