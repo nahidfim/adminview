@@ -42,7 +42,7 @@ export default function AdminSignInSide({setValue, data, t}) {
         admin_password: data.get('admin_password'),
      
     }
-    await fetch('/login', {method: 'POST',headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)}).then(response =>
+    await fetch('/adminlogin', {method: 'POST',headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)}).then(response =>
       response.text())
     .then(data => {
       console.log(data);
@@ -50,12 +50,9 @@ export default function AdminSignInSide({setValue, data, t}) {
         setValue(10);
     }
 else{
-    setValue(10);
+    setValue(9);
 }});
   };
-  const handleSignup = () => {
-    setValue(5);
-  }
   const handleAdminSignup = () => {
     setValue(9);
   }
@@ -82,20 +79,20 @@ else{
               margin="normal"
               required
               fullWidth
-              id="Admin_code"
-              label={t("Admin_code")}
-              name="Admin_code"
-              autoComplete="Admin_code"
+              id="admin_code"
+              label={t("admin_code")}
+              name="admin_code"
+              autoComplete="admin_code"
               autoFocus
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="Admin_password"
-              label={t("Admin_password")}
+              name="admin_password"
+              label={t("admin_password")}
               type="password"
-              id="Admin_password"
+              id="admin_password"
               autoComplete="current-password"
             />
             {/* <FormControlLabel

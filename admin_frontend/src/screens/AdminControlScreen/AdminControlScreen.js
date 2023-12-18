@@ -29,7 +29,7 @@ const AdminControlScreen = ({ setValue, t}) => {
   }
 
   React.useEffect(() => {
-    fetch('/get_operator').then((response) => {
+    fetch('/get_admin').then((response) => {
       return response.text();
     }).then((response) => {
       console.log(response);
