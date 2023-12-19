@@ -5,21 +5,19 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import styles from "./SattelementProcess.module.css";
+import styles from "./TableSellsPdf.module.css";
 
-const SattelementProcess = ({ setValue, t}) => {
+const TableSellsPdf = ({ setValue, t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
 
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-  };
-  const handleViewOrder = () => {
-    setValue(2);
+  const handleTableSellsPdf = () => {
+    setValue();
   };
   const handledone = () => {
     setValue(10);
   };
+
 
   React.useEffect(() => {
     fetch('/get_admin').then((response) => {
@@ -34,10 +32,10 @@ const SattelementProcess = ({ setValue, t}) => {
     <Container className={styles.outermostContainer}>
     <Box className={styles.admincode}>
           <h1 variant="h5"> {t('admin_code')} : {code}</h1>
-    </Box>
-    <Box className={styles.admindate}>
-    <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1>
-    </Box>
+         </Box>
+         <Box className={styles.admindate}>
+          <h1 variant="h5"> {t('sells_date')} : {"2023/12/19"} ~ {"2023/12/19"}</h1>
+         </Box>
       <Box className={styles.ButtonGroup}>
      
         <Box className={styles.secondBox}>
@@ -46,9 +44,9 @@ const SattelementProcess = ({ setValue, t}) => {
           <Button
             variant="large"
             className={styles.lightgreenButton}
-            onClick={handleViewOrder}
+            onClick={handleTableSellsPdf}
           >
-            {t('admin_option_2')}
+            {t('print')}
           </Button>         
         </Box>
 
@@ -67,4 +65,4 @@ const SattelementProcess = ({ setValue, t}) => {
   );
 };
 
-export default SattelementProcess;
+export default TableSellsPdf;

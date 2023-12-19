@@ -5,24 +5,17 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import styles from "./AdminControlScreen.module.css";
+import styles from "./ProductSellsPdf.module.css";
 
-const AdminControlScreen = ({ setValue, t}) => {
+const ProductSellsPdf = ({ setValue, t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
 
-  const handleSettlementProcess = () => {
-    setValue(11);
-  };
-  const handleTableSellsPdf = (e) => {
-    setValue(12);
-  }
   const handleProductSellsPdf = () => {
-    setValue(13);
+    setValue(2);
   };
-
   const handledone = () => {
-    setValue(8);
+    setValue(10);
   };
 
   React.useEffect(() => {
@@ -35,55 +28,40 @@ const AdminControlScreen = ({ setValue, t}) => {
     });
   }, [])
   return (
-  <Container className={styles.outermostContainer}>
-    <Box className={styles.OperatorCode}>
+    <Container className={styles.outermostContainer}>
+    <Box className={styles.admincode}>
           <h1 variant="h5"> {t('admin_code')} : {code}</h1>
     </Box>
-      
-    <Box className={styles.ButtonGroup}>
+    <Box className={styles.admindate}>
+          <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1>
+    </Box>
+      <Box className={styles.ButtonGroup}>
      
         <Box className={styles.secondBox}>
       
       {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
           <Button
             variant="large"
-            className={styles.redButton}
-            onClick={handleSettlementProcess}
-          >
-            {t('admin_option_2')}
-          </Button>
-
-     
-          <Button
-            variant="large"
-            className={styles.redButton}
-            onClick={handleTableSellsPdf}
-          >
-            {t('admin_option_3')}
-          </Button>
-          <Button
-            variant="large"
-            className={styles.redButton}
+            className={styles.lightgreenButton}
             onClick={handleProductSellsPdf}
           >
-            {t('admin_option_4')}
-          </Button>
-          
-          <Button
+            {t('print')}
+          </Button>         
+        </Box>
+
+        <Box className={styles.thirdbox}>
+        <Button
             variant="large"
             className={styles.lightgreenButton}
             onClick={handledone}
           >
             {t('done')}
           </Button>
-
         </Box>
-
-        
-      </Box>
+        </Box>
       
     </Container>
   );
 };
 
-export default AdminControlScreen;
+export default ProductSellsPdf;

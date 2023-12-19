@@ -48,7 +48,7 @@
     display: flex;
     flex-direction: row;
     margin-top: 300px;
-    
+    margin-left: -300px;
 }
 .headerContent{
   margin-top: 20px;
@@ -98,11 +98,6 @@
     gap:10px;
 }
 .OperatorCode{
-    height: 86px;
-    width: 345px;
-    border-style: ridge;
-    border-width: thick;
-    border-color: red;
     margin-top: 70px;
-
+   margin-left: -355px;
 }

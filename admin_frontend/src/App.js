@@ -12,6 +12,8 @@ import ProductInfo from "./screens/ProductInfo/ProductInfo";
 import CategoryMaster from "./screens/CategoryMaster/CategoryMaster";
 import AdminControlScreen from "./screens/AdminControlScreen/AdminControlScreen";
 import SattelementProcess from "./screens/SattelementProcess/SattelementProcess";
+import TableSellsPdf from "./screens/TableSellsPdf/TableSellsPdf";
+import ProductSellsPdf from "./screens/ProductSellsPdf/ProductSellsPdf";
 import { useTranslation } from 'react-i18next'
 import "./i18n.js";
 
@@ -92,6 +94,14 @@ function App() {
       <TabPanel value={value} index={11} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <SattelementProcess setValue={setValue} data={data} t={t}/>
+      </TabPanel>
+      <TabPanel value={value} index={12} sx={{ minWidth: "100%" }}>
+        {/* Your content for Tab 1 goes here */}
+        <TableSellsPdf setValue={setValue} data={data} t={t}/>
+      </TabPanel>
+      <TabPanel value={value} index={13} sx={{ minWidth: "100%" }}>
+        {/* Your content for Tab 1 goes here */}
+        <ProductSellsPdf setValue={setValue} data={data} t={t}/>
       </TabPanel>
 
       <Box sx={{ p: 3 }}>{/* Your content goes here */}</Box>
