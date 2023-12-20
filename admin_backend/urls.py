@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import front, get_order_transactions, change_status, cancel_order, login, logout, register, adminlogin, adminlogout, adminregister,add_product, product_data, get_operator, get_category, add_category, get_product_category
+from core.views import front, get_order_transactions, change_status, cancel_order, login, logout, register, adminlogin, adminlogout, adminregister, add_product, product_data, get_admin, get_category, add_category, get_product_category
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,7 +32,7 @@ urlpatterns = [
     path("adminlogin", adminlogin),
     path("adminlogout", adminlogout),
     path("adminregister/", adminregister),
-    path('get_operator/', get_operator),
+    path('get_admin/', get_admin),
     path('get_category', get_category),
     path('add_category', add_category),
     path('get_product_category', get_product_category)

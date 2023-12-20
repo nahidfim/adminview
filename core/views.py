@@ -64,7 +64,8 @@ def login(request):
 def logout(request):
     if request.method == "GET":
         return HttpResponse("Order has been updated")
-    
+
+
 @csrf_exempt
 def register(request):
     if request.method == "POST":
@@ -76,6 +77,7 @@ def register(request):
             operator_code=operator_code, operator_name=operator_name, operator_password=password, last_login="")
         new_user.save()
         return HttpResponse(True)
+
 
 @csrf_exempt
 def adminlogin(request):
@@ -110,7 +112,8 @@ def adminregister(request):
             admin_code=admin_code, admin_name=admin_name, admin_password=password, last_login="")
         new_user.save()
         return HttpResponse(True)
-    
+
+
 @csrf_exempt
 def add_product(request):
     if request.method == 'POST':
@@ -133,9 +136,9 @@ def product_data(request):
 
 
 @csrf_exempt
-def get_operator(request):
+def get_admin(request):
     if request.method == 'GET':
-        return HttpResponse(request.session.get('operator_code', ''))
+        return HttpResponse(request.session.get('admin_code', ''))
 
 
 @csrf_exempt
