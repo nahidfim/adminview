@@ -7,16 +7,33 @@ import {
 } from "@mui/material";
 import styles from "./SattelementProcess.module.css";
 
-const SattelementProcess = ({ setValue, t}) => {
+const SattelementProcess = ({ setValue, t }) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
-  const handleViewOrder = () => {
-    setValue(2);
+  const handleViewOrder = async () => {
+    try {
+      const response = await fetch('/generate_pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      const pdfURL = responseData.pdf_url; 
+      localStorage.setItem("pdf_url",pdfURL)
+      window.open(pdfURL, '_blank');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+
   const handledone = () => {
     setValue(10);
   };
@@ -32,28 +49,28 @@ const SattelementProcess = ({ setValue, t}) => {
   }, [])
   return (
     <Container className={styles.outermostContainer}>
-    <Box className={styles.admincode}>
-          <h1 variant="h5"> {t('admin_code')} : {code}</h1>
-    </Box>
-    <Box className={styles.admindate}>
-    <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1>
-    </Box>
+      <Box className={styles.admincode}>
+        <h1 variant="h5"> {t('admin_code')} : {code}</h1>
+      </Box>
+      <Box className={styles.admindate}>
+        <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1>
+      </Box>
       <Box className={styles.ButtonGroup}>
-     
+
         <Box className={styles.secondBox}>
-      
-      {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
+
+          {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
           <Button
             variant="large"
             className={styles.lightgreenButton}
             onClick={handleViewOrder}
           >
             {t('admin_option_2')}
-          </Button>         
+          </Button>
         </Box>
 
         <Box className={styles.thirdbox}>
-        <Button
+          <Button
             variant="large"
             className={styles.lightgreenButton}
             onClick={handledone}
@@ -61,8 +78,8 @@ const SattelementProcess = ({ setValue, t}) => {
             {t('done')}
           </Button>
         </Box>
-        </Box>
-      
+      </Box>
+
     </Container>
   );
 };

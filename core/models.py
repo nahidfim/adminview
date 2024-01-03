@@ -1,5 +1,8 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
+
 import datetime
+import os
 
 # Create your models here.
 
@@ -14,7 +17,7 @@ class order_transactions(models.Model):
     product_unit_price = models.CharField(max_length=30)
     order_amount = models.IntegerField(max_length=30)
     status = models.CharField(max_length=30, default="active")
-    order_time = models.TimeField(default=datetime.datetime.utcnow())
+    order_time = models.DateTimeField(default=datetime.datetime.utcnow())
     provider_operator_code = models.CharField(max_length=30)
     provision_completion_flag = models.BooleanField(default=False)
     delivery_completion_time = models.TimeField(
@@ -23,6 +26,17 @@ class order_transactions(models.Model):
     order_cancellation_time = models.TimeField(
         default=datetime.datetime.utcnow())
     product_image_link_dest = models.TextField(max_length=50)
+
+
+def get_pdf_url(instance, filename):
+    return os.path.join('', filename)
+
+
+class OrderTransactionPDF(models.Model):
+    pdf_file = models.FileField(blank=True, null=True,
+                                validators=[FileExtensionValidator(
+                                    allowed_extensions=['pdf'])])
+    transaction_time = models.DateTimeField(default=datetime.datetime.utcnow())
 
 
 class company_master(models.Model):

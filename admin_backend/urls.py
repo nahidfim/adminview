@@ -16,7 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import front, get_order_transactions, change_status, cancel_order, login, logout, register, adminlogin, adminlogout, adminregister, add_product, product_data, get_admin, get_category, add_category, get_product_category
+from core.views import (
+    front, get_order_transactions, change_status, cancel_order,
+    login, logout, register, adminlogin, adminlogout, adminregister,
+    add_product, product_data, get_admin, get_category, add_category,
+    get_product_category, generate_pdf, search_pdf
+)
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,5 +42,9 @@ urlpatterns = [
     path('get_admin/', get_admin),
     path('get_category', get_category),
     path('add_category', add_category),
-    path('get_product_category', get_product_category)
+    path('get_product_category', get_product_category),
+    path('generate_pdf', generate_pdf),
+    path('search_pdf', search_pdf)
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,12 +1,23 @@
 from django.shortcuts import render
 import base64
 from django.core.files.base import ContentFile
-from core.models import order_transactions, operator_code_master, admin_code_master, product_info_master, product_category_master
+from core.models import (
+    order_transactions, operator_code_master,
+    admin_code_master, product_info_master,
+    product_category_master, OrderTransactionPDF
+)
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as login_function
+from django.template.loader import render_to_string
+
+from datetime import datetime, time
+
 import json
+import pytz
+
+from weasyprint import HTML, CSS
 
 # Create your views here.
 
@@ -164,3 +175,75 @@ def get_product_category(request):
     if request.method == 'GET':
         product_data = product_category_master.objects.values()
         return JsonResponse(list(product_data), safe=False)
+
+
+@csrf_exempt
+def generate_pdf(request):
+    order_transactions_list = []
+    order_transaction_map = {}
+    total_order = 0
+    total_amount = 0
+    today_date = datetime.utcnow()
+    from_date = datetime.combine(today_date.date(),
+                                 time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
+    to_date = datetime.combine(today_date.date(),
+                               time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
+    order_transactions_qs = order_transactions.objects.filter(
+        order_time__range=[from_date, to_date])
+    for order_transaction in order_transactions_qs:
+        if order_transaction_map.get(order_transaction.table_no):
+            order_value = order_transaction_map[order_transaction.table_no]['total_order']
+            order_value += 1
+            order_transaction_map[order_transaction.table_no]['total_order'] = order_value
+            amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
+            amount_value += order_transaction.order_amount
+            order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
+        else:
+            order_value = 1
+            amount_value = order_transaction.order_amount
+            order_transaction_map[order_transaction.table_no] = {
+                "total_order": order_value,
+                "total_amount": amount_value,
+                "lane_no": order_transaction.lane_no
+            }
+
+    for key, value in order_transaction_map.items():
+        total_order += order_transaction_map[key]['total_order']
+        total_amount += order_transaction_map[key]['total_amount']
+        value["table_no"] = key
+        order_transactions_list.append(value)
+
+    from_date = from_date.strftime('%Y-%m-%d %H:%M')
+    to_date = to_date.strftime('%Y-%m-%d %H:%M')
+    data = {
+        "order_transactions": order_transactions_list,
+        "total_amount": total_amount,
+        "total_order": total_order,
+        "from_date": from_date,
+        "to_date": to_date
+    }
+    filename = f"order_transaction_{int(today_date.timestamp())}.pdf"
+    file_path = f"media/{filename}"
+    html_string = render_to_string('order_transaction_pdf.html', data)
+    css = CSS(string='@page { size: A4; margin: 0.15in;  }')
+    HTML(string=html_string).write_pdf(file_path, stylesheets=[css])
+    order_transaction_obj = OrderTransactionPDF.objects.create(
+        transaction_time=today_date, pdf_file=filename)
+    return JsonResponse({'pdf_url': order_transaction_obj.pdf_file.url}, safe=False)
+
+
+@csrf_exempt
+def search_pdf(request):
+    if request.method == "GET":
+        search_param = request.GET.get('search_param')
+        pdf_url_list = []
+        search_date = datetime.strptime(search_param, '%Y-%m-%d')
+        order_transaction_pdfs = OrderTransactionPDF.objects.filter(
+            transaction_time__contains=search_date.date()
+        ).order_by('-transaction_time')
+        for pdf in order_transaction_pdfs:
+            pdf_url_list.append({
+                'pdf_url': pdf.pdf_file.url,
+                'transaction_time': pdf.transaction_time
+            })
+        return JsonResponse({'pdf_url_list': pdf_url_list}, safe=False)
