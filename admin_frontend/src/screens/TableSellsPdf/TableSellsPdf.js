@@ -6,18 +6,33 @@ import {
   Typography
 } from "@mui/material";
 import styles from './TableSellsPdf.module.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const TableSellsPdf = ({ setValue, t }) => {
-  const [selectedDate, setSelectedDate] = React.useState('');
+  const [selectedFromDate, setSelectedFromDate] = React.useState('');
+  const [selectedToDate, setSelectedToDate] = React.useState('');
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
   const [pdfUrls, setPdfUrls] = React.useState([]);
+
 
   const handleTableSellsPdf = () => {
     setValue();
   };
   const handleSearchPdf = async () => {
     try {
-      const response = await fetch('/search_pdf?search_param=' + selectedDate, {
+      const formattedFromDate = selectedFromDate.toLocaleDateString('en-CA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      const formattedToDate = selectedToDate.toLocaleDateString('en-CA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      const response = await fetch(`/search_pdf?from_date=${formattedFromDate}&to_date=${formattedToDate}`, {
         method: 'GET',
       });
       console.log(response)
@@ -35,10 +50,12 @@ const TableSellsPdf = ({ setValue, t }) => {
   const handledone = () => {
     setValue(10);
   };
-  const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
+  const handleFromDateChange = (date) => {
+    setSelectedFromDate(date);
   };
-
+  const handleToDateChange = (date) => {
+    setSelectedToDate(date);
+  };
 
   React.useEffect(() => {
     fetch('/get_admin').then((response) => {
@@ -55,15 +72,32 @@ const TableSellsPdf = ({ setValue, t }) => {
         <h1 variant="h5"> {t('admin_code')} : {code}</h1>
       </Box>
       <Box className={styles.admindate}>
-        <h1 variant="h5"> {t('sells_date')} : {"2023/12/19"} ~ {"2023/12/19"}</h1>
+        <h1 variant="h5">{t('sells_date')} : {selectedFromDate ? selectedFromDate.toLocaleDateString('en-CA', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }) : 'From Date'} ~ {selectedToDate ? selectedToDate.toLocaleDateString('en-CA', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }) : 'To Date'}</h1>
       </Box>
       <Box className={styles.fourthbox}>
-        <input
-          className={styles.input} 
-          type="date"
-          value={selectedDate}
-          onChange={handleDateChange}
+        <DatePicker
+          selected={selectedFromDate}
+          onChange={handleFromDateChange}
+          dateFormat="yyyy/MM/dd"
+          placeholderText="From Date"
+          className={styles.customDatePicker}
         />
+        <DatePicker
+          selected={selectedToDate}
+          onChange={handleToDateChange}
+          dateFormat="yyyy/MM/dd"
+          placeholderText="To Date"
+          className={styles.customDatePicker}
+        />
+
         <Button
           className={styles.searchButton}
           variant="contained"
@@ -73,12 +107,12 @@ const TableSellsPdf = ({ setValue, t }) => {
           {t('search')}
         </Button>
         <ul>
-        {pdfUrls.map((pdf, index) => (
-          <li key={index} className={styles.dataListing}>
-            <a href={pdf.pdf_url} target="_blank" rel="noreferrer">Order Transaction {pdf.transaction_time}</a>
-          </li>
-        ))}
-      </ul>
+          {pdfUrls.map((pdf, index) => (
+            <li key={index} className={styles.dataListing}>
+              <a href={pdf.pdf_url} target="_blank" rel="noreferrer">Order Transaction {pdf.transaction_time}</a>
+            </li>
+          ))}
+        </ul>
 
       </Box>
 

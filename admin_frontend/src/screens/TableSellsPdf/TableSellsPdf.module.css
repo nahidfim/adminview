@@ -8,7 +8,6 @@
     border-width: thick;
     background-color: aliceblue;
     height: 100vh;
-    margin-top: -200px;
     gap: 20px;
     padding-left: 100px;;
     
@@ -101,9 +100,6 @@
     width: 370px;
 
 }
-/* .admindate{
-    margin-right: -675px;?
-} */
 
 .input {
     width: 120px;
@@ -115,7 +111,16 @@
     margin-left: 20px;
     height: 40px; /* Adding space between the date field and search button */
   }
-  
+
+  /* Custom styles for the DatePicker */
+.customDatePicker {
+    font-family: Arial, sans-serif;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 10px;
+    height: 30px;
+  }
   .dataListing {
     margin-bottom: 10px;
   }

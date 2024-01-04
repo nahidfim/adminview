@@ -235,11 +235,18 @@ def generate_pdf(request):
 @csrf_exempt
 def search_pdf(request):
     if request.method == "GET":
-        search_param = request.GET.get('search_param')
+        from_date = request.GET.get('from_date')
+        to_date = request.GET.get('to_date')
+
         pdf_url_list = []
-        search_date = datetime.strptime(search_param, '%Y-%m-%d')
+        from_date = datetime.strptime(from_date, '%Y-%m-%d')
+        to_date = datetime.strptime(to_date, '%Y-%m-%d')
+        from_date = datetime.combine(from_date.date(),
+                                 time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
+        to_date = datetime.combine(to_date.date(),
+                               time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
         order_transaction_pdfs = OrderTransactionPDF.objects.filter(
-            transaction_time__contains=search_date.date()
+            transaction_time__range=[from_date, to_date]
         ).order_by('-transaction_time')
         for pdf in order_transaction_pdfs:
             pdf_url_list.append({
