@@ -34,6 +34,16 @@ const SattelementProcess = ({ setValue, t }) => {
     }
   };
 
+  const date = new Date();
+
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  
+  // This arrangement can be altered based on how we want the date's format to appear.
+  let currentDate = `${year}-${month}-${day}`;
+  console.log(currentDate); // "17-6-2022"
+
   const handledone = () => {
     setValue(10);
   };
@@ -51,10 +61,8 @@ const SattelementProcess = ({ setValue, t }) => {
     <Container className={styles.outermostContainer}>
       <Box className={styles.admincode}>
         <h1 variant="h5"> {t('admin_code')} : {code}</h1>
+        <h1 variant="h5"> 本日 :{currentDate}</h1>
       </Box>
-      {/* <Box className={styles.admindate}>
-            <h3 style="font-size: 14px;">Report issue date:{ to_date }</h3>
-      </Box> */}
       <Box className={styles.ButtonGroup}>
 
         <Box className={styles.secondBox}>
