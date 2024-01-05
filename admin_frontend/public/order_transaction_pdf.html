@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load app_filters %}
+{% load static %}
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -15,6 +16,7 @@
     .invoice-main{float:left;width:100%;padding:10px;}
     .company-details{margin-bottom:50px;}
     .invoice-main h3{color:#ccc;margin-bottom:20px;}
+    .Thankyou h3{color:#ccc;margin-top:250px;}
     .invoice-main .left-col{float:left;}
     .invoice-main .right-col{float:right;width: 45%;}
     .invoice-main .right-col li{float:left;width: 100%;}
@@ -39,7 +41,10 @@
             <h3 style="text-align: center; margin-bottom: 40px;">TABLE SELLS REPORT</h3>
         </div>
         <div>
-            <h3 style="font-size: 14px;">Report issue date: {{ from_date }} AM to {{ to_date }} PM</h3>
+            <img src="{% static 'images/logo.png' %}" alt="">
+        </div>
+        <div>
+            <h3 style="font-size: 14px;">Report issue date:{{ to_date }}</h3>
         </div>
         <div class="billing-table">            
             <table>
@@ -57,7 +62,7 @@
                         <td>{{ data.table_no }}</td>
                         <td>{{ data.lane_no }}</td>
                         <td>{{ data.total_order|format_number }}</td>
-                        <td>{{ data.total_amount|format_number }}</td>
+                        <td>{{ data.total_amount|format_number }} 円</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -71,8 +76,13 @@
                 </li>
                 <li>
                     <strong>Total Amount</strong>
-                    <span>${{ total_amount|format_number }}</span>
+                    <span>{{ total_amount|format_number }} 円</span>
                 </li>
+            </ul>
+        </div>
+        <div class="Thankyou">
+            <ul>
+                <h3 style="text-align: center; margin-top: 250px;">copyright@sushi order system</h3>
             </ul>
         </div>
 

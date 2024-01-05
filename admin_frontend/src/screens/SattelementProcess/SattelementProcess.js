@@ -52,9 +52,9 @@ const SattelementProcess = ({ setValue, t }) => {
       <Box className={styles.admincode}>
         <h1 variant="h5"> {t('admin_code')} : {code}</h1>
       </Box>
-      <Box className={styles.admindate}>
-        <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1>
-      </Box>
+      {/* <Box className={styles.admindate}>
+            <h3 style="font-size: 14px;">Report issue date:{ to_date }</h3>
+      </Box> */}
       <Box className={styles.ButtonGroup}>
 
         <Box className={styles.secondBox}>

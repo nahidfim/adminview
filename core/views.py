@@ -196,11 +196,11 @@ def generate_pdf(request):
             order_value += 1
             order_transaction_map[order_transaction.table_no]['total_order'] = order_value
             amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
-            amount_value += order_transaction.order_amount
+            amount_value += order_transaction.product_unit_price
             order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
         else:
             order_value = 1
-            amount_value = order_transaction.order_amount
+            amount_value = order_transaction.product_unit_price
             order_transaction_map[order_transaction.table_no] = {
                 "total_order": order_value,
                 "total_amount": amount_value,
@@ -213,8 +213,8 @@ def generate_pdf(request):
         value["table_no"] = key
         order_transactions_list.append(value)
 
-    from_date = from_date.strftime('%Y-%m-%d %H:%M')
-    to_date = to_date.strftime('%Y-%m-%d %H:%M')
+    from_date = from_date.strftime('%Y-%m-%d')
+    to_date = to_date.strftime('%Y-%m-%d')
     data = {
         "order_transactions": order_transactions_list,
         "total_amount": total_amount,
@@ -242,9 +242,9 @@ def search_pdf(request):
         from_date = datetime.strptime(from_date, '%Y-%m-%d')
         to_date = datetime.strptime(to_date, '%Y-%m-%d')
         from_date = datetime.combine(from_date.date(),
-                                 time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
+                                     time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
         to_date = datetime.combine(to_date.date(),
-                               time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
+                                   time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
         order_transaction_pdfs = OrderTransactionPDF.objects.filter(
             transaction_time__range=[from_date, to_date]
         ).order_by('-transaction_time')
