@@ -10,27 +10,9 @@ import styles from "./AdminControlScreen.module.css";
 const AdminControlScreen = ({ setValue, t}) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
+  
   const handleSettlementProcess = async () => {
     setValue(11);
-    console.log("hello")
-    try {
-      const response = await fetch('/generate_pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log("this is before response.ok")
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const data = await response.json();
-      console.log('PDF URL:', data.pdf_url);
-      setValue(11);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
   };
   
   const handleTableSellsPdf = (e) => {
@@ -69,7 +51,7 @@ const AdminControlScreen = ({ setValue, t}) => {
             className={styles.redButton}
             onClick={handleSettlementProcess}
           >
-            {t('admin_option_2')}
+            {t('settlement process')}
           </Button>
 
      
@@ -78,14 +60,14 @@ const AdminControlScreen = ({ setValue, t}) => {
             className={styles.redButton}
             onClick={handleTableSellsPdf}
           >
-            {t('admin_option_3')}
+            {t('Tablet settlement Search')}
           </Button>
           <Button
             variant="large"
             className={styles.redButton}
             onClick={handleProductSellsPdf}
           >
-            {t('admin_option_4')}
+            {t('Item settlement Search')}
           </Button>
           
           <Button

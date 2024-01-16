@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load app_filters %}
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Order Transaction</title>
+    <style>
+    dl, ol, ul{margin:0;list-style-type:none;padding:0;}
+    *{margin:0px; padding:0px; border:none; outline:none; box-sizing:border-box;-webkit-box-sizing:border-box;-ms-box-sizing:border-box;-o-box-sizing:border-box;-moz-box-sizing:border-box;}
+    @font-face{font-family:'helveticaneuemedium';src:url('./helveticaneue_medium.woff2') format('woff2'), url('./fonts/helveticaneue_medium.woff') format('woff');font-weight:normal;font-style:normal;}
+    @font-face{font-family:'Roboto-Light';src:url('./fonts/Roboto-Light.eot') format('embedded-opentype'), url('./fonts/Roboto-Light.woff') format('woff'), url('../fonts/Roboto-Light.ttf') format('truetype'), url('./fonts/Roboto-Light.svg#Roboto-Light') format('svg');font-weight:normal;font-style:normal;}
+    body{font-family:'helveticaneuemedium';margin: 0 auto;}
+    .invoice-main{float:left;width:100%;padding:10px;}
+    .company-details{margin-bottom:50px;}
+    .invoice-main h3{color:#ccc;margin-bottom:20px;}
+    .invoice-main .left-col{float:left;}
+    .invoice-main .right-col{float:right;width: 45%;}
+    .invoice-main .right-col li{float:left;width: 100%;}
+    .invoice-main .right-col span {float: right;min-width: 160px;text-align: right;}
+    .invoice-main .right-col strong{color:#ccc;margin:0 25px;min-width:110px;float:left;}
+    .billing-details{margin-bottom:30px;}
+    .billing-table{display:inline-block;width:100%;margin-top:10px;padding-bottom:10px;}
+    .billing-table table{border-collapse:collapse;width:100%;}
+    .billing-table td, th{text-align:left;padding:8px;}
+    .billing-table th{background-color:#ccc;-webkit-print-color-adjust:exact;color:gray;font-family:'Roboto-Light';}
+    .billing-total li strong {min-width: 270px;display: inline-block;color: #ccc;}
+    .billing-total li span{text-align:right;display:inline-block;min-width:120px;}
+    .billing-total ul {float: left;width: 400px;}
+    .billing-total ul li{padding:18px 0;font-size:18px;}
+    .billing-total{float:right;}
+    </style>
+</head>
+
+<body>
+   <div class="invoice-main">
+        <div>
+            <h3 style="text-align: center; margin-bottom: 40px;">Item SELLS REPORT</h3>
+        </div>
+        <div>
+            <h3 style="font-size: 14px;">Report issue date: {{ from_date }} AM to {{ to_date }} PM</h3>
+        </div>
+        <div class="billing-table">            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item code</th>
+                        <th>Item Name</th>
+                        <th>Order</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for data in order_transactions %}
+                    <tr style="border-bottom: 1px Dashed #ccc;">
+                        <td>{{ data.table_no }}</td>
+                        <td>{{ data.lane_no }}</td>
+                        <td>{{ data.total_order|format_number }}</td>
+                        <td>{{ data.total_amount|format_number }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        <div class="billing-total">
+            <ul>
+                <li>
+                    <strong>Total Order</strong>
+                    <span>{{ total_order|format_number }}</span>
+                </li>
+                <li>
+                    <strong>Total Amount</strong>
+                    <span>${{ total_amount|format_number }}</span>
+                </li>
+            </ul>
+        </div>
+
+   </div>
+</body>
+
+</html>

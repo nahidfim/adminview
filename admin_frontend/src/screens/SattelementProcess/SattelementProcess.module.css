@@ -39,7 +39,7 @@
     flex-direction: column;
     gap:10px;
     margin-left: -135px;
-    margin-top: 75px;
+    margin-top: 95px;
 }
 .ButtonGroup{
     display: flex;
@@ -101,6 +101,6 @@
     margin-right: -410px;
 }
 .admindate{
-    margin-right: -675px;
+    margin-right: -327px;
     margin-top: 150px;
 }

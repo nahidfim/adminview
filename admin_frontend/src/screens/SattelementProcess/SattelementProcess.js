@@ -6,15 +6,19 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "./SattelementProcess.module.css";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const SattelementProcess = ({ setValue, t }) => {
+  const notify = () => toast("精算中!");
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
+  const current = new Date();
+  const date = `${current.getFullYear()}/${current.getMonth()+1}/${current.getDate()}/`;
 
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-  };
-  const handleViewOrder = async () => {
+  async function toBeCalledByEventListener() {
+
+    //1st try-catch block
+  
     try {
       const response = await fetch('/generate_pdf', {
         method: 'POST',
@@ -25,13 +29,39 @@ const SattelementProcess = ({ setValue, t }) => {
       const responseData = await response.json();
       const pdfURL = responseData.pdf_url; 
       localStorage.setItem("pdf_url",pdfURL)
-      window.open(pdfURL, '_blank');
+      // window.open(pdfURL, '_blank');
+      notify()
+      if (!response.ok) {
+        toast("An unexpected error occurred, please try again later.")
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  
+    //2nd try-catch block
+  
+    try {
+      const response = await fetch('/generate_pdf_item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      const pdfURL = responseData.pdf_url; 
+      localStorage.setItem("pdf_url",pdfURL)
+      // window.open(pdfURL, '_blank');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  
+  }
+  const handleViewOrder = async () => {
+    
   };
 
   const handledone = () => {
@@ -49,23 +79,26 @@ const SattelementProcess = ({ setValue, t }) => {
   }, [])
   return (
     <Container className={styles.outermostContainer}>
+      
       <Box className={styles.admincode}>
         <h1 variant="h5"> {t('admin_code')} : {code}</h1>
       </Box>
       <Box className={styles.admindate}>
-        <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1>
+      <h1> 日付　：{date}</h1>
+        {/* <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1> */}
       </Box>
       <Box className={styles.ButtonGroup}>
 
         <Box className={styles.secondBox}>
-
+        <ToastContainer/>
           {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
           <Button
             variant="large"
             className={styles.lightgreenButton}
-            onClick={handleViewOrder}
+            onClick={toBeCalledByEventListener}
+            
           >
-            {t('admin_option_2')}
+            {t('print')}
           </Button>
         </Box>
 
