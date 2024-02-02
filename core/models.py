@@ -6,6 +6,45 @@ import os
 
 # Create your models here.
 
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+
+
+class UserAccountManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+
+        user.set_password(password)
+        user.save()
+
+        return user
+
+
+class UserAccount(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(max_length=255, unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserAccountManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    def get_full_name(self):
+        return self.first_name
+
+    def get_short_name(self):
+        return self.first_name
+
+    def __str__(self):
+        return self.email
+
 
 class order_transactions(models.Model):
     order_no = models.CharField(max_length=100, primary_key=True)
@@ -33,6 +72,13 @@ def get_pdf_url(instance, filename):
 
 
 class OrderTransactionPDF(models.Model):
+    pdf_file = models.FileField(blank=True, null=True,
+                                validators=[FileExtensionValidator(
+                                    allowed_extensions=['pdf'])])
+    transaction_time = models.DateTimeField(default=datetime.datetime.utcnow())
+
+
+class OrderTransactionItemPDF(models.Model):
     pdf_file = models.FileField(blank=True, null=True,
                                 validators=[FileExtensionValidator(
                                     allowed_extensions=['pdf'])])
@@ -107,6 +153,7 @@ class operator_code_master(models.Model):
     operator_password = models.CharField(max_length=30)
     last_login = models.CharField(max_length=30)
     registration_time = models.TimeField(default=datetime.datetime.utcnow())
+
 
 class admin_code_master(models.Model):
     admin_code = models.CharField(max_length=30)

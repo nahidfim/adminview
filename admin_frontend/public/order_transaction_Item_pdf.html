@@ -54,10 +54,10 @@
                 <tbody>
                 {% for data in order_transactions %}
                     <tr style="border-bottom: 1px Dashed #ccc;">
-                        <td>{{ data.table_no }}</td>
-                        <td>{{ data.lane_no }}</td>
+                        <td>{{ data.product_code }}</td>
+                        <td>{{ data.product_name_en }}</td>
                         <td>{{ data.total_order|format_number }}</td>
-                        <td>{{ data.total_amount|format_number }}</td>
+                        <td>{{ data.total_amount|format_number }}円</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -71,7 +71,7 @@
                 </li>
                 <li>
                     <strong>Total Amount</strong>
-                    <span>${{ total_amount|format_number }}</span>
+                    <span> {{ total_amount|format_number }}円</span>
                 </li>
             </ul>
         </div>

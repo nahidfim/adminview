@@ -15,17 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from core.views import (
     front, get_order_transactions, change_status, cancel_order,
     login, logout, register, adminlogin, adminlogout, adminregister,
     add_product, product_data, get_admin, get_category, add_category,
-    get_product_category, generate_pdf, search_pdf
+    get_product_category, generate_pdf, search_pdf, generate_pdf_item, search_item_pdf
 )
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
     path('admin/', admin.site.urls),
     path("", front, name="front"),
     path("get_order_transactions/<str:data_flag>/", get_order_transactions),
@@ -44,7 +46,9 @@ urlpatterns = [
     path('add_category', add_category),
     path('get_product_category', get_product_category),
     path('generate_pdf', generate_pdf),
-    path('search_pdf', search_pdf)
+    path('search_pdf', search_pdf),
+    path('generate_pdf_item', generate_pdf_item),
+    path('search_item_pdf', search_item_pdf),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

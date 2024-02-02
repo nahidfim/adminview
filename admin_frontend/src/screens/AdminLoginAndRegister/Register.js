@@ -54,9 +54,9 @@ export default function AdminSignUp({setValue, t}) {
         if(data=='True'){
         setValue(8);
     }
-else{
-    setValue(9);
-}})
+    else{
+       setValue(9);
+     }})
   };
 
   const handleSigIn = () => {
