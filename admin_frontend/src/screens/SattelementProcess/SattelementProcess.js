@@ -77,7 +77,7 @@ const SattelementProcess = ({ setValue, t }) => {
       // Check if the response is successful
       if (!response.ok) {
         // Handle the case where the response is not ok
-        toast("An unexpected error occurred, please try again later.");
+        
         throw new Error('Network response was not ok');
       }
   
@@ -91,7 +91,6 @@ const SattelementProcess = ({ setValue, t }) => {
       localStorage.setItem("excel_url", excelURL);
   
       // Display a notification or toast to indicate that the Excel file was generated successfully
-      notify();
   
       // Optionally, you can open the Excel file in a new tab/window
       window.open(excelURL, '_blank');

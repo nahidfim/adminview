@@ -22,9 +22,17 @@ const AdminControlScreen = ({ setValue, t}) => {
     setValue(13);
   };
 
-  const handleSattelementProcessExcel = () => {
-    setValue(14);
+  // const handleSattelementProcessExcel = () => {
+  //   setValue(14);
+  // };
+  const handleTableSellsExcel = () => {
+    setValue(15);
   };
+
+  const handleProductSellsExcel = () => {
+    setValue(16);
+  };
+
   const handledone = () => {
     setValue(8);
   };
@@ -76,10 +84,25 @@ const AdminControlScreen = ({ setValue, t}) => {
           <Button
             variant="large"
             className={styles.redButton}
+            onClick={handleTableSellsExcel}
+          >
+            {t('端末EXCEL検索')}
+          </Button>
+          <Button
+            variant="large"
+            className={styles.redButton}
+            onClick={handleProductSellsExcel}
+          >
+            {t('商品EXCEL検索')}
+          </Button>
+
+          {/* <Button
+            variant="large"
+            className={styles.redButton}
             onClick={handleSattelementProcessExcel}
           >
             {t('EXCEL出力')}
-          </Button>
+          </Button> */}
 
           <Button
             variant="large"
