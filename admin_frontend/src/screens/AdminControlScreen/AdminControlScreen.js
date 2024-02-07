@@ -22,6 +22,9 @@ const AdminControlScreen = ({ setValue, t}) => {
     setValue(13);
   };
 
+  const handleSattelementProcessExcel = () => {
+    setValue(14);
+  };
   const handledone = () => {
     setValue(8);
   };
@@ -69,7 +72,15 @@ const AdminControlScreen = ({ setValue, t}) => {
           >
             {t('Item settlement Search')}
           </Button>
-          
+
+          <Button
+            variant="large"
+            className={styles.redButton}
+            onClick={handleSattelementProcessExcel}
+          >
+            {t('EXCEL出力')}
+          </Button>
+
           <Button
             variant="large"
             className={styles.lightgreenButton}

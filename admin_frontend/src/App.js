@@ -14,9 +14,10 @@ import AdminControlScreen from "./screens/AdminControlScreen/AdminControlScreen"
 import SattelementProcess from "./screens/SattelementProcess/SattelementProcess";
 import TableSellsPdf from "./screens/TableSellsPdf/TableSellsPdf";
 import ProductSellsPdf from "./screens/ProductSellsPdf/ProductSellsPdf";
+import SattelementProcessExcel from "./screens/SattelementProcessExcel/SattelementProcessExcel";
 import { useTranslation } from 'react-i18next'
 import "./i18n.js";
-
+import axios from 'axios';
 function App() {
   const [value, setValue] = useState(0);
   const [data, setData] = useState([]);
@@ -102,6 +103,11 @@ function App() {
       <TabPanel value={value} index={13} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <ProductSellsPdf setValue={setValue} data={data} t={t}/>
+      </TabPanel>
+
+      <TabPanel value={value} index={14} sx={{ minWidth: "100%" }}>
+        {/* Your content for Tab 1 goes here */}
+        <SattelementProcessExcel setValue={setValue} data={data} t={t}/>
       </TabPanel>
 
       <Box sx={{ p: 3 }}>{/* Your content goes here */}</Box>

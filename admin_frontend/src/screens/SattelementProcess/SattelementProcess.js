@@ -1,4 +1,5 @@
 import React from "react";
+import axios from 'axios';
 import {
   Box,
   Container,
@@ -58,11 +59,40 @@ const SattelementProcess = ({ setValue, t }) => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  
+      //3nd try-catch block for excel file
+    // 　　 try {
+    //   const response = await axios.get('/generate_excel', { responseType: 'blob' });
+
+    //   // Create a download link
+    //   const downloadLink = document.createElement('a');
+    //   const url = window.URL.createObjectURL(new Blob([response.data]));
+    //   downloadLink.href = url;
+    //   downloadLink.setAttribute('download', 'Table_Sells_Report.xlsx');
+    //   document.body.appendChild(downloadLink);
+    //   downloadLink.click();
+    //   document.body.removeChild(downloadLink);
+    // } catch (error) {
+    //   toast("An unexpected error occurred, please try again later.")
+    //   console.error('Error downloading Excel file:', error);
+    // }
+    // //4nd try-catch block for excel file
+    // try {
+    //   const response = await axios.get('/generate_excel_item', { responseType: 'blob' });
+
+    //   // Create a download link
+    //   const downloadLink = document.createElement('a');
+    //   const url = window.URL.createObjectURL(new Blob([response.data]));
+    //   downloadLink.href = url;
+    //   downloadLink.setAttribute('download', 'Item_Sells_Report.xlsx');
+    //   document.body.appendChild(downloadLink);
+    //   downloadLink.click();
+    //   document.body.removeChild(downloadLink);
+    // } catch (error) {
+    //   console.error('Error downloading Excel file:', error);
+    // }
+
+
   }
-  const handleViewOrder = async () => {
-    
-  };
 
   const handledone = () => {
     setValue(10);
