@@ -9,12 +9,14 @@ import {
 import styles from "./SattelementProcess.module.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const SattelementProcess = ({ setValue, t }) => {
   const notify = () => toast("精算中!");
+  const [selectedDate, setSelectedDate] = React.useState('');
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
-  const current = new Date();
-  const date = `${current.getFullYear()}/${current.getMonth()+1}/${current.getDate()}/`;
 
   async function toBeCalledByEventListener() {
 
@@ -143,8 +145,6 @@ const SattelementProcess = ({ setValue, t }) => {
 
   }
   
- 
-
   // Function to get CSRF token from cookies
   function getCookie(name) {
     let cookieValue = null;
@@ -200,6 +200,10 @@ const SattelementProcess = ({ setValue, t }) => {
     setValue(10);
   };
 
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
   React.useEffect(() => {
     fetch('/get_admin').then((response) => {
       return response.text();
@@ -216,9 +220,22 @@ const SattelementProcess = ({ setValue, t }) => {
         <h1 variant="h5"> {t('admin_code')} : {code}</h1>
       </Box>
       <Box className={styles.admindate}>
-      <h1> 日付　：{date}</h1>
-        {/* <h1 variant="h5"> {t('sells_date')} :  {"2023/12/19"} ~ {"2023/12/19"}</h1> */}
+        <h1 variant="h5">{t('sells_date')} : {selectedDate ? selectedDate.toLocaleDateString('en-CA', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }) : 'From Date'}</h1>
       </Box>
+      <Box className={styles.fourthbox}>
+        <DatePicker
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="yyyy/MM/dd"
+          placeholderText="Select Date"
+          className={styles.customDatePicker}
+        />
+      </Box>
+
       <Box className={styles.ButtonGroup}>
 
         <Box className={styles.secondBox}>
