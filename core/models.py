@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
-
+from django.utils import timezone
 import datetime
 import os
 
@@ -83,6 +83,22 @@ class OrderTransactionItemPDF(models.Model):
                                 validators=[FileExtensionValidator(
                                     allowed_extensions=['pdf'])])
     transaction_time = models.DateTimeField(default=datetime.datetime.utcnow())
+
+
+class OrderTransactionExcel(models.Model):
+    transaction_time = models.DateTimeField(default=timezone.now)
+    excel_file = models.FileField(upload_to='excel_files/')
+
+    def __str__(self):
+        return f"Excel file created at {self.transaction_time}"
+
+
+class OrderTransactionItemExcel(models.Model):
+    transaction_time = models.DateTimeField(default=timezone.now)
+    excel_file = models.FileField(upload_to='excel_files/')
+
+    def __str__(self):
+        return f"Excel file created at {self.transaction_time}"
 
 
 class company_master(models.Model):

@@ -4,7 +4,8 @@ from django.core.files.base import ContentFile
 from core.models import (
     order_transactions, operator_code_master,
     admin_code_master, product_info_master,
-    product_category_master, OrderTransactionPDF, OrderTransactionItemPDF
+    product_category_master, OrderTransactionPDF, OrderTransactionItemPDF,
+    OrderTransactionExcel, OrderTransactionItemExcel
 )
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,6 +13,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as login_function
 from django.template.loader import render_to_string
 
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, Border, Side, PatternFill
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.utils import timezone
 from datetime import datetime, time
 
 import json
@@ -333,3 +339,255 @@ def search_item_pdf(request):
                 'transaction_time': pdf.transaction_time
             })
         return JsonResponse({'pdf_url_list': pdf_url_list}, safe=False)
+
+
+@csrf_exempt
+def generate_excel(request):
+    order_transactions_list = []
+    order_transaction_map = {}
+    total_order = 0
+    total_amount = 0
+    today_date = timezone.now()
+    from_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.min.time())
+    to_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.max.time())
+    order_transactions_qs = order_transactions.objects.filter(
+        order_time__range=[from_date, to_date])
+
+    for order_transaction in order_transactions_qs:
+        if order_transaction_map.get(order_transaction.table_no):
+            order_value = order_transaction_map[order_transaction.table_no]['total_order']
+            order_value += 1
+            order_transaction_map[order_transaction.table_no]['total_order'] = order_value
+            amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
+            amount_value += order_transaction.product_unit_price
+            order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
+        else:
+            order_value = 1
+            amount_value = order_transaction.product_unit_price
+            order_transaction_map[order_transaction.table_no] = {
+                "total_order": order_value,
+                "total_amount": amount_value,
+                "lane_no": order_transaction.lane_no
+            }
+
+    for key, value in order_transaction_map.items():
+        total_order += order_transaction_map[key]['total_order']
+        total_amount += order_transaction_map[key]['total_amount']
+        value["table_no"] = key
+        order_transactions_list.append(value)
+
+    data = {
+        "order_transactions": order_transactions_list,
+        "total_amount": total_amount,
+        "total_order": total_order,
+        "from_date": from_date,
+        "to_date": to_date
+    }
+
+    # Generate Excel file
+    wb = Workbook()
+    ws = wb.active
+
+    # Get the current date and time
+    current_date = datetime.now()
+    # Add title and date at the top
+
+    title_cell = ws.cell(row=1, column=2)
+    title_cell.value = "Table Sells Report"
+    title_cell.font = Font(size=16, bold=True)
+    title_cell.alignment = Alignment(horizontal='center')
+
+    date_cell = ws.cell(row=2, column=2)
+    date_cell.value = f"Date: {current_date.strftime('%Y-%m-%d')}"
+    date_cell.font = Font(size=12, italic=True)
+    date_cell.alignment = Alignment(horizontal='center')
+
+    # Define header background color
+    header_fill = PatternFill(start_color='0070C0',
+                              end_color='0070C0', fill_type='solid')
+
+    # Define thin border style
+    thin_border = Border(left=Side(style='thin'),
+                         right=Side(style='thin'),
+                         top=Side(style='thin'),
+                         bottom=Side(style='thin'))
+
+   # Apply background color and border style to headers
+    for col_index, header in enumerate(["LAN No.", "テブル No", "注文数量", "合計金額"], start=1):
+        header_cell = ws.cell(row=3, column=col_index, value=header)
+        header_cell.fill = header_fill
+        header_cell.border = thin_border
+
+    # Apply thin border style to data cells
+    for row_idx, transaction in enumerate(order_transactions_list, start=4):
+        ws.cell(row=row_idx, column=1,
+                value=transaction["lane_no"]).border = thin_border
+        ws.cell(row=row_idx, column=2,
+                value=transaction["table_no"]).border = thin_border
+        ws.cell(row=row_idx, column=3,
+                value=transaction["total_order"]).border = thin_border
+        ws.cell(row=row_idx, column=4,
+                value=transaction["total_amount"]).border = thin_border
+
+    # Save the Excel file
+    filename = f"Table_sells_Report_{today_date.strftime('%Y%m%d%H%M%S')}.xlsx"
+    file_path = f"media/{filename}"
+    wb.save(file_path)
+
+    # Save file path to database
+    order_transaction_obj = OrderTransactionExcel.objects.create(
+        transaction_time=today_date, excel_file=filename)
+
+    return JsonResponse({'excel_url': order_transaction_obj.excel_file.url}, safe=False)
+
+
+@csrf_exempt
+def generate_Item_excel(request):
+    order_transactions_list = []
+    order_transaction_map = {}
+    total_order = 0
+    total_amount = 0
+    today_date = timezone.now()
+    from_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.min.time())
+    to_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.max.time())
+    order_transactions_qs = order_transactions.objects.filter(
+        order_time__range=[from_date, to_date])
+
+    for order_transaction in order_transactions_qs:
+        if order_transaction_map.get(order_transaction.product_name_en):
+            order_value = order_transaction_map[order_transaction.product_name_en]['total_order']
+            order_value += 1
+            order_transaction_map[order_transaction.product_name_en]['total_order'] = order_value
+            amount_value = order_transaction_map[order_transaction.product_name_en]['total_amount']
+            amount_value += order_transaction.product_unit_price
+            order_transaction_map[order_transaction.product_name_en]['total_amount'] = amount_value
+        else:
+            order_value = 1
+            amount_value = order_transaction.product_unit_price
+            order_transaction_map[order_transaction.product_name_en] = {
+                "total_order": order_value,
+                "total_amount": amount_value,
+                "product_code": order_transaction.product_code
+            }
+
+    for key, value in order_transaction_map.items():
+        total_order += order_transaction_map[key]['total_order']
+        total_amount += order_transaction_map[key]['total_amount']
+        value["product_name_en"] = key
+        order_transactions_list.append(value)
+
+    data = {
+        "order_transactions": order_transactions_list,
+        "total_amount": total_amount,
+        "total_order": total_order,
+        "from_date": from_date,
+        "to_date": to_date
+    }
+
+    # Generate Excel file
+    wb = Workbook()
+    ws = wb.active
+
+    # Get the current date and time
+    current_date = datetime.now()
+    # Add title and date at the top
+
+    title_cell = ws.cell(row=1, column=2)
+    title_cell.value = "Item Sells Report"
+    title_cell.font = Font(size=16, bold=True)
+    title_cell.alignment = Alignment(horizontal='center')
+
+    date_cell = ws.cell(row=2, column=2)
+    date_cell.value = f"Date: {current_date.strftime('%Y-%m-%d')}"
+    date_cell.font = Font(size=12, italic=True)
+    date_cell.alignment = Alignment(horizontal='center')
+
+    # Define header background color
+    header_fill = PatternFill(start_color='0070C0',
+                              end_color='0070C0', fill_type='solid')
+
+    # Define thin border style
+    thin_border = Border(left=Side(style='thin'),
+                         right=Side(style='thin'),
+                         top=Side(style='thin'),
+                         bottom=Side(style='thin'))
+
+   # Apply background color and border style to headers
+    for col_index, header in enumerate(["コード", "商品名", "注文数量", "合計金額"], start=1):
+        header_cell = ws.cell(row=3, column=col_index, value=header)
+        header_cell.fill = header_fill
+        header_cell.border = thin_border
+
+     # Apply thin border style to data cells
+    for row_idx, transaction in enumerate(order_transactions_list, start=4):
+        ws.cell(row=row_idx, column=1,
+                value=transaction["product_code"]).border = thin_border
+        ws.cell(row=row_idx, column=2,
+                value=transaction["product_name_en"]).border = thin_border
+        ws.cell(row=row_idx, column=3,
+                value=transaction["total_order"]).border = thin_border
+        ws.cell(row=row_idx, column=4,
+                value=transaction["total_amount"]).border = thin_border
+
+    # Save the Excel file
+    filename = f"Item_sells_Report_{today_date.strftime('%Y%m%d%H%M%S')}.xlsx"
+    file_path = f"media/{filename}"
+    wb.save(file_path)
+
+    # Save file path to database
+    order_transaction_obj = OrderTransactionItemExcel.objects.create(
+        transaction_time=today_date, excel_file=filename)
+
+    return JsonResponse({'excel_url': order_transaction_obj.excel_file.url}, safe=False)
+
+
+@csrf_exempt
+def search_excel(request):
+    if request.method == "GET":
+        from_date = request.GET.get('from_date')
+        to_date = request.GET.get('to_date')
+
+        excel_url_list = []
+        from_date = datetime.strptime(from_date, '%Y-%m-%d')
+        to_date = datetime.strptime(to_date, '%Y-%m-%d')
+        from_date = datetime.combine(from_date.date(),
+                                     time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
+        to_date = datetime.combine(to_date.date(),
+                                   time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
+        order_transaction_excels = OrderTransactionExcel.objects.filter(
+            transaction_time__range=[from_date, to_date]
+        ).order_by('-transaction_time')
+        for excel in order_transaction_excels:
+            excel_url_list.append({
+                'excel_url': excel.excel_file.url,
+                'transaction_time': excel.transaction_time
+            })
+        return JsonResponse({'excel_url_list': excel_url_list}, safe=False)
+
+
+@csrf_exempt
+def search_Item_excel(request):
+    if request.method == "GET":
+        from_date = request.GET.get('from_date')
+        to_date = request.GET.get('to_date')
+
+        excel_url_list = []
+        from_date = datetime.strptime(from_date, '%Y-%m-%d')
+        to_date = datetime.strptime(to_date, '%Y-%m-%d')
+        from_date = datetime.combine(from_date.date(),
+                                     time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
+        to_date = datetime.combine(to_date.date(),
+                                   time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
+        order_transaction_excels = OrderTransactionItemExcel.objects.filter(
+            transaction_time__range=[from_date, to_date]
+        ).order_by('-transaction_time')
+        for excel in order_transaction_excels:
+            excel_url_list.append({
+                'excel_url': excel.excel_file.url,
+                'transaction_time': excel.transaction_time
+            })
+        return JsonResponse({'excel_url_list': excel_url_list}, safe=False)

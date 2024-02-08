@@ -20,7 +20,8 @@ from core.views import (
     front, get_order_transactions, change_status, cancel_order,
     login, logout, register, adminlogin, adminlogout, adminregister,
     add_product, product_data, get_admin, get_category, add_category,
-    get_product_category, generate_pdf, search_pdf, generate_pdf_item, search_item_pdf
+    get_product_category, generate_pdf, search_pdf, generate_pdf_item,
+    search_item_pdf, generate_excel, generate_Item_excel, search_excel, search_Item_excel
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -49,6 +50,10 @@ urlpatterns = [
     path('search_pdf', search_pdf),
     path('generate_pdf_item', generate_pdf_item),
     path('search_item_pdf', search_item_pdf),
+    path('generate_excel', generate_excel),
+    path('generate_Item_excel', generate_Item_excel),
+    path('search_excel', search_excel),
+    path('search_Item_excel', search_Item_excel),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
