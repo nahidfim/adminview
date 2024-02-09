@@ -188,24 +188,27 @@ def generate_pdf(request):
     order_transaction_map = {}
     total_order = 0
     total_amount = 0
-    today_date = datetime.utcnow()
-    from_date = datetime.combine(today_date.date(),
-                                 time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
-    to_date = datetime.combine(today_date.date(),
-                               time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
+
+    today_date = timezone.now()
+    from_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.min.time())
+    to_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.max.time())
     order_transactions_qs = order_transactions.objects.filter(
         order_time__range=[from_date, to_date])
+
     for order_transaction in order_transactions_qs:
         if order_transaction_map.get(order_transaction.table_no):
             order_value = order_transaction_map[order_transaction.table_no]['total_order']
-            order_value += 1
+            order_value += order_transaction.order_amount
             order_transaction_map[order_transaction.table_no]['total_order'] = order_value
             amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
-            amount_value += order_transaction.product_unit_price
+            amount_value += order_transaction.product_unit_price * \
+                order_transaction.order_amount
             order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
         else:
-            order_value = 1
-            amount_value = order_transaction.product_unit_price
+            order_value = order_transaction.order_amount
+            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
             order_transaction_map[order_transaction.table_no] = {
                 "total_order": order_value,
                 "total_amount": amount_value,
@@ -213,13 +216,11 @@ def generate_pdf(request):
             }
 
     for key, value in order_transaction_map.items():
-        total_order += order_transaction_map[key]['total_order']
-        total_amount += order_transaction_map[key]['total_amount']
+        total_order += value['total_order']
+        total_amount += value['total_amount']
         value["table_no"] = key
         order_transactions_list.append(value)
 
-    from_date = from_date.strftime('%Y-%m-%d %H:%M')
-    to_date = to_date.strftime('%Y-%m-%d %H:%M')
     data = {
         "order_transactions": order_transactions_list,
         "total_amount": total_amount,
@@ -243,24 +244,27 @@ def generate_pdf_item(request):
     order_transaction_map = {}
     total_order = 0
     total_amount = 0
-    today_date = datetime.utcnow()
-    from_date = datetime.combine(today_date.date(),
-                                 time(0, 0, 0, tzinfo=pytz.timezone('UTC')))
-    to_date = datetime.combine(today_date.date(),
-                               time(23, 59, 59, tzinfo=pytz.timezone('UTC')))
+
+    today_date = timezone.now()
+    from_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.min.time())
+    to_date = timezone.datetime.combine(
+        today_date.date(), timezone.datetime.max.time())
     order_transactions_qs = order_transactions.objects.filter(
         order_time__range=[from_date, to_date])
+
     for order_transaction in order_transactions_qs:
         if order_transaction_map.get(order_transaction.product_name_en):
             order_value = order_transaction_map[order_transaction.product_name_en]['total_order']
-            order_value += 1
+            order_value += order_transaction.order_amount
             order_transaction_map[order_transaction.product_name_en]['total_order'] = order_value
             amount_value = order_transaction_map[order_transaction.product_name_en]['total_amount']
-            amount_value += order_transaction.product_unit_price
+            amount_value += order_transaction.product_unit_price * \
+                order_transaction.order_amount
             order_transaction_map[order_transaction.product_name_en]['total_amount'] = amount_value
         else:
-            order_value = 1
-            amount_value = order_transaction.product_unit_price
+            order_value = order_transaction.order_amount
+            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
             order_transaction_map[order_transaction.product_name_en] = {
                 "total_order": order_value,
                 "total_amount": amount_value,
@@ -268,13 +272,11 @@ def generate_pdf_item(request):
             }
 
     for key, value in order_transaction_map.items():
-        total_order += order_transaction_map[key]['total_order']
-        total_amount += order_transaction_map[key]['total_amount']
+        total_order += value['total_order']
+        total_amount += value['total_amount']
         value["product_name_en"] = key
         order_transactions_list.append(value)
 
-    from_date = from_date.strftime('%Y-%m-%d %H:%M')
-    to_date = to_date.strftime('%Y-%m-%d %H:%M')
     data = {
         "order_transactions": order_transactions_list,
         "total_amount": total_amount,
@@ -346,6 +348,7 @@ def generate_excel(request):
     order_transaction_map = {}
     total_order = 0
     total_amount = 0
+
     today_date = timezone.now()
     from_date = timezone.datetime.combine(
         today_date.date(), timezone.datetime.min.time())
@@ -357,14 +360,15 @@ def generate_excel(request):
     for order_transaction in order_transactions_qs:
         if order_transaction_map.get(order_transaction.table_no):
             order_value = order_transaction_map[order_transaction.table_no]['total_order']
-            order_value += 1
+            order_value += order_transaction.order_amount
             order_transaction_map[order_transaction.table_no]['total_order'] = order_value
             amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
-            amount_value += order_transaction.product_unit_price
+            amount_value += order_transaction.product_unit_price * \
+                order_transaction.order_amount
             order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
         else:
-            order_value = 1
-            amount_value = order_transaction.product_unit_price
+            order_value = order_transaction.order_amount
+            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
             order_transaction_map[order_transaction.table_no] = {
                 "total_order": order_value,
                 "total_amount": amount_value,
@@ -372,8 +376,8 @@ def generate_excel(request):
             }
 
     for key, value in order_transaction_map.items():
-        total_order += order_transaction_map[key]['total_order']
-        total_amount += order_transaction_map[key]['total_amount']
+        total_order += value['total_order']
+        total_amount += value['total_amount']
         value["table_no"] = key
         order_transactions_list.append(value)
 
@@ -468,6 +472,7 @@ def generate_Item_excel(request):
     order_transaction_map = {}
     total_order = 0
     total_amount = 0
+
     today_date = timezone.now()
     from_date = timezone.datetime.combine(
         today_date.date(), timezone.datetime.min.time())
@@ -479,14 +484,15 @@ def generate_Item_excel(request):
     for order_transaction in order_transactions_qs:
         if order_transaction_map.get(order_transaction.product_name_en):
             order_value = order_transaction_map[order_transaction.product_name_en]['total_order']
-            order_value += 1
+            order_value += order_transaction.order_amount
             order_transaction_map[order_transaction.product_name_en]['total_order'] = order_value
             amount_value = order_transaction_map[order_transaction.product_name_en]['total_amount']
-            amount_value += order_transaction.product_unit_price
+            amount_value += order_transaction.product_unit_price * \
+                order_transaction.order_amount
             order_transaction_map[order_transaction.product_name_en]['total_amount'] = amount_value
         else:
-            order_value = 1
-            amount_value = order_transaction.product_unit_price
+            order_value = order_transaction.order_amount
+            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
             order_transaction_map[order_transaction.product_name_en] = {
                 "total_order": order_value,
                 "total_amount": amount_value,
@@ -494,8 +500,8 @@ def generate_Item_excel(request):
             }
 
     for key, value in order_transaction_map.items():
-        total_order += order_transaction_map[key]['total_order']
-        total_amount += order_transaction_map[key]['total_amount']
+        total_order += value['total_order']
+        total_amount += value['total_amount']
         value["product_name_en"] = key
         order_transactions_list.append(value)
 
@@ -506,7 +512,6 @@ def generate_Item_excel(request):
         "from_date": from_date,
         "to_date": to_date
     }
-
     # Generate Excel file
     wb = Workbook()
     ws = wb.active
