@@ -19,7 +19,6 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from datetime import datetime, time
-
 import json
 import pytz
 
@@ -414,6 +413,19 @@ def generate_excel(request):
                          top=Side(style='thin'),
                          bottom=Side(style='thin'))
 
+    # Add rows for total order and total amount
+    total_order_row = len(order_transactions_list) + 4
+    ws.cell(row=total_order_row, column=1,
+            value="Total Order").font = Font(bold=True)
+    ws.cell(row=total_order_row, column=3,
+            value=total_order).font = Font(bold=True)
+
+    total_amount_row = len(order_transactions_list) + 5
+    ws.cell(row=total_amount_row, column=1,
+            value="Total Amount").font = Font(bold=True)
+    ws.cell(row=total_amount_row, column=3,
+            value=f"{total_amount:,}円").font = Font(bold=True)
+
    # Apply background color and border style to headers
     for col_index, header in enumerate(["LAN No.", "テブル No", "注文数量", "合計金額"], start=1):
         header_cell = ws.cell(row=3, column=col_index, value=header)
@@ -424,13 +436,20 @@ def generate_excel(request):
     for row_idx, transaction in enumerate(order_transactions_list, start=4):
         ws.cell(row=row_idx, column=1,
                 value=transaction["lane_no"]).border = thin_border
+        ws.cell(row=row_idx, column=1).alignment = Alignment(
+            horizontal='center')
         ws.cell(row=row_idx, column=2,
                 value=transaction["table_no"]).border = thin_border
+        ws.cell(row=row_idx, column=2).alignment = Alignment(
+            horizontal='center')
         ws.cell(row=row_idx, column=3,
                 value=transaction["total_order"]).border = thin_border
+        ws.cell(row=row_idx, column=3).alignment = Alignment(
+            horizontal='center')
         ws.cell(row=row_idx, column=4,
-                value=transaction["total_amount"]).border = thin_border
-
+                value=f"{transaction['total_amount']:,}円").border = thin_border
+        ws.cell(row=row_idx, column=4).alignment = Alignment(
+            horizontal='center')
     # Save the Excel file
     filename = f"Table_sells_Report_{today_date.strftime('%Y%m%d%H%M%S')}.xlsx"
     file_path = f"media/{filename}"
@@ -516,6 +535,19 @@ def generate_Item_excel(request):
                          top=Side(style='thin'),
                          bottom=Side(style='thin'))
 
+    # Add rows for total order and total amount
+    total_order_row = len(order_transactions_list) + 4
+    ws.cell(row=total_order_row, column=1,
+            value="Total Order").font = Font(bold=True)
+    ws.cell(row=total_order_row, column=3,
+            value=total_order).font = Font(bold=True)
+
+    total_amount_row = len(order_transactions_list) + 5
+    ws.cell(row=total_amount_row, column=1,
+            value="Total Amount").font = Font(bold=True)
+    ws.cell(row=total_amount_row, column=3,
+            value=f"{total_amount:,}円").font = Font(bold=True)
+
    # Apply background color and border style to headers
     for col_index, header in enumerate(["コード", "商品名", "注文数量", "合計金額"], start=1):
         header_cell = ws.cell(row=3, column=col_index, value=header)
@@ -526,12 +558,20 @@ def generate_Item_excel(request):
     for row_idx, transaction in enumerate(order_transactions_list, start=4):
         ws.cell(row=row_idx, column=1,
                 value=transaction["product_code"]).border = thin_border
+        ws.cell(row=row_idx, column=1).alignment = Alignment(
+            horizontal='center')
         ws.cell(row=row_idx, column=2,
                 value=transaction["product_name_en"]).border = thin_border
+        ws.cell(row=row_idx, column=2).alignment = Alignment(
+            horizontal='center')
         ws.cell(row=row_idx, column=3,
                 value=transaction["total_order"]).border = thin_border
+        ws.cell(row=row_idx, column=3).alignment = Alignment(
+            horizontal='center')
         ws.cell(row=row_idx, column=4,
-                value=transaction["total_amount"]).border = thin_border
+                value=f"{transaction['total_amount']:,}円").border = thin_border
+        ws.cell(row=row_idx, column=4).alignment = Alignment(
+            horizontal='center')
 
     # Save the Excel file
     filename = f"Item_sells_Report_{today_date.strftime('%Y%m%d%H%M%S')}.xlsx"
