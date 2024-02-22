@@ -65,6 +65,7 @@ class order_transactions(models.Model):
     order_cancellation_time = models.TimeField(
         default=datetime.datetime.utcnow())
     product_image_link_dest = models.TextField(max_length=50)
+    settlement_date = models.DateField(default=datetime.datetime.now())
 
 
 def get_pdf_url(instance, filename):

@@ -143,6 +143,26 @@ const SattelementProcess = ({ setValue, t }) => {
       
     }
 
+    try {
+      const response = await fetch('/store_settlement_date', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          {
+            'settlement_date': selectedDate
+          }
+        )
+      });
+      const responseData = await response.json();
+      // window.open(pdfURL, '_blank');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
   
   // Function to get CSRF token from cookies
@@ -212,6 +232,15 @@ const SattelementProcess = ({ setValue, t }) => {
       setCode(response);
       return response
     });
+
+    fetch('/get_order_date').then((response) => {
+      return response.text();
+    }).then((response) => {
+      console.log(response);
+      setSelectedDate(new Date(response));
+      return response
+    });
+    
   }, [])
   return (
     <Container className={styles.outermostContainer}>

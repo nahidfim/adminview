@@ -21,7 +21,8 @@ from core.views import (
     login, logout, register, adminlogin, adminlogout, adminregister,
     add_product, product_data, get_admin, get_category, add_category,
     get_product_category, generate_pdf, search_pdf, generate_pdf_item,
-    search_item_pdf, generate_excel, generate_Item_excel, search_excel, search_Item_excel
+    search_item_pdf, generate_excel, generate_Item_excel, search_excel,
+    get_order_date, store_settlement_date, search_Item_excel
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -54,6 +55,8 @@ urlpatterns = [
     path('generate_Item_excel', generate_Item_excel),
     path('search_excel', search_excel),
     path('search_Item_excel', search_Item_excel),
+    path('get_order_date', get_order_date),
+    path('store_settlement_date', store_settlement_date),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

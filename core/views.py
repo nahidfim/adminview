@@ -636,3 +636,21 @@ def search_Item_excel(request):
                 'transaction_time': excel.transaction_time
             })
         return JsonResponse({'excel_url_list': excel_url_list}, safe=False)
+
+
+@csrf_exempt
+def get_order_date(request):
+    if request.method == 'GET':
+        order_time = order_transactions.objects.filter(order_no=1).filter(provision_completion_flag=False).filter(
+            order_cancellation_flag=False).filter(status="active").values_list('order_time')
+        return HttpResponse(order_time[0][0].strftime("%a %b %d %Y %H:%M:%S GMT%z (%Z)"))
+
+
+@csrf_exempt
+def store_settlement_date(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        settlement_date = body['settlement_date']
+        order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(
+            order_cancellation_flag=False).filter(status="active").update(settlement_date=datetime.strptime(settlement_date, '%Y-%m-%dT%H:%M:%S.%fZ'))
+        return JsonResponse(True, safe=False)
