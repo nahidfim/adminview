@@ -20,6 +20,27 @@ const SattelementProcess = ({ setValue, t }) => {
 
   async function toBeCalledByEventListener() {
 
+//store_settlement_date block
+try {
+  const response = await fetch('/store_settlement_date', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      'settlement_date': selectedDate
+    })
+  });
+  const responseData = await response.json();
+  // window.open(pdfURL, '_blank');
+  if (!response.ok) {
+    toast.warning("Selected Date Is not Order_time");
+    throw new Error('Network response was not ok');
+  }
+} catch (error) {
+  console.error('Error fetching data:', error);
+  return; // Stop execution here
+}
     //1st try-catch block
   
     try {
@@ -143,26 +164,6 @@ const SattelementProcess = ({ setValue, t }) => {
       
     }
 
-    try {
-      const response = await fetch('/store_settlement_date', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(
-          {
-            'settlement_date': selectedDate
-          }
-        )
-      });
-      const responseData = await response.json();
-      // window.open(pdfURL, '_blank');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
   }
   
   // Function to get CSRF token from cookies

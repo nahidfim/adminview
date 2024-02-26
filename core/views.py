@@ -646,11 +646,36 @@ def get_order_date(request):
         return HttpResponse(order_time[0][0].strftime("%a %b %d %Y %H:%M:%S GMT%z (%Z)"))
 
 
+# @csrf_exempt
+# def store_settlement_date(request):
+#     if request.method == 'POST':
+#         body = json.loads(request.body)
+#         settlement_date = body['settlement_date']
+#         order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(
+#             order_cancellation_flag=False).filter(status="active").update(settlement_date=datetime.strptime(settlement_date, '%Y-%m-%dT%H:%M:%S.%fZ'))
+#         return JsonResponse(True, safe=False)
 @csrf_exempt
 def store_settlement_date(request):
     if request.method == 'POST':
         body = json.loads(request.body)
-        settlement_date = body['settlement_date']
-        order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(
-            order_cancellation_flag=False).filter(status="active").update(settlement_date=datetime.strptime(settlement_date, '%Y-%m-%dT%H:%M:%S.%fZ'))
-        return JsonResponse(True, safe=False)
+        settlement_date = body.get('settlement_date')
+        if not settlement_date:
+            return JsonResponse({'error': 'Settlement date not provided'}, status=400)
+
+        # Fetch the order date from the database
+        order = order_transactions.objects.filter(order_no=1, provision_completion_flag=False,
+                                                  order_cancellation_flag=False, status="active").first()
+        if not order:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+        # Ensure selectedDate matches the settlement_date
+        selected_date = datetime.strptime(
+            settlement_date, '%Y-%m-%dT%H:%M:%S.%fZ')
+        if order.order_time.date() != selected_date.date():
+            return JsonResponse({'error': 'Selected date does not match order date'}, status=400)
+
+        # Update the settlement date in the database
+        order.settlement_date = selected_date
+        order.save()
+
+        return JsonResponse({'success': True})
