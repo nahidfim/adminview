@@ -671,11 +671,19 @@ def store_settlement_date(request):
         if settlement_processed_today:
             return JsonResponse({'error': 'Settlement date has already been processed today'}, status=400)
 
+        # Define a list of order numbers dynamically
+        order_nos = [1, 2, 3]  # Add all order numbers here dynamically
+
+        # Fetch orders based on the list of order numbers
+        orders = order_transactions.objects.filter(order_no__in=order_nos, provision_completion_flag=False,
+                                                   order_cancellation_flag=False, status="active")
+
+        # Check if any orders are found
+        if not orders:
+            return JsonResponse({'error': 'Orders not found'}, status=404)
+
         # Fetch the order date from the database
-        order = order_transactions.objects.filter(order_no=1, provision_completion_flag=False,
-                                                  order_cancellation_flag=False, status="active").first()
-        if not order:
-            return JsonResponse({'error': 'Order not found'}, status=404)
+        order = orders.first()
 
         # Ensure selectedDate matches the settlement_date
         selected_date = datetime.strptime(
@@ -683,9 +691,10 @@ def store_settlement_date(request):
         if order.order_time.date() != selected_date.date():
             return JsonResponse({'error': 'Selected date does not match order date'}, status=400)
 
-        # Update the settlement date in the database
-        order.settlement_date = selected_date
-        order.save()
+        # Update the settlement date for each matching order in the database
+        for order in orders:
+            order.settlement_date = selected_date
+            order.save()
 
         # Mark settlement as processed for today
         settlement_processed_today = True
