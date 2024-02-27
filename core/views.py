@@ -24,6 +24,9 @@ import pytz
 
 from weasyprint import HTML, CSS
 
+
+# Flag to track if settlement date has been processed for the day
+settlement_processed_today = False
 # Create your views here.
 
 
@@ -656,11 +659,17 @@ def get_order_date(request):
 #         return JsonResponse(True, safe=False)
 @csrf_exempt
 def store_settlement_date(request):
+    global settlement_processed_today
+
     if request.method == 'POST':
         body = json.loads(request.body)
         settlement_date = body.get('settlement_date')
         if not settlement_date:
             return JsonResponse({'error': 'Settlement date not provided'}, status=400)
+
+        # Check if settlement has already been processed today
+        if settlement_processed_today:
+            return JsonResponse({'error': 'Settlement date has already been processed today'}, status=400)
 
         # Fetch the order date from the database
         order = order_transactions.objects.filter(order_no=1, provision_completion_flag=False,
@@ -677,5 +686,8 @@ def store_settlement_date(request):
         # Update the settlement date in the database
         order.settlement_date = selected_date
         order.save()
+
+        # Mark settlement as processed for today
+        settlement_processed_today = True
 
         return JsonResponse({'success': True})

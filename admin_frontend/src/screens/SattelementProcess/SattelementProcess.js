@@ -17,7 +17,6 @@ const SattelementProcess = ({ setValue, t }) => {
   const [selectedDate, setSelectedDate] = React.useState('');
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
-
   async function toBeCalledByEventListener() {
 
 //store_settlement_date block
@@ -31,16 +30,26 @@ try {
       'settlement_date': selectedDate
     })
   });
-  const responseData = await response.json();
-  // window.open(pdfURL, '_blank');
+
   if (!response.ok) {
+    // Error handling for when the response status is not OK
     toast.warning("Selected Date Is not Order_time");
     throw new Error('Network response was not ok');
   }
 } catch (error) {
   console.error('Error fetching data:', error);
+  if (error.message === 'Settlement date has already been processed today') {
+    // Error handling specific to when the settlement date has already been processed today
+    toast.error("Settlement date has already been processed today");
+  } else {
+    // Generic error handling for other types of errors
+    toast.error("Settlement date has already been processed today.");
+  }
   return; // Stop execution here
 }
+
+
+
     //1st try-catch block
   
     try {
