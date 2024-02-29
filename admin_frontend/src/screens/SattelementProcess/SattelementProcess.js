@@ -4,7 +4,6 @@ import {
   Box,
   Container,
   Button,
-  Typography,
 } from "@mui/material";
 import styles from "./SattelementProcess.module.css";
 import { ToastContainer, toast } from 'react-toastify';
@@ -19,8 +18,8 @@ const SattelementProcess = ({ setValue, t }) => {
   const [code, setCode] = React.useState('')
   async function toBeCalledByEventListener() {
 
-//store_settlement_date block
-try {
+ //1st try-catch block
+ try {
   const response = await fetch('/store_settlement_date', {
     method: 'POST',
     headers: {
@@ -32,25 +31,23 @@ try {
   });
 
   if (!response.ok) {
-    // Error handling for when the response status is not OK
-    toast.warning("Selected Date Is not Order_time");
+    // If response status is not OK, handle the error
+    const errorMessage = await response.text(); // Extract error message from response
+    toast.warning(errorMessage || "Error occurred"); // Display error message or default message
     throw new Error('Network response was not ok');
+  } else {
+    // If response status is OK, handle success
+    toast.success("Settlement date updated successfully");
   }
 } catch (error) {
+  // Catch any other errors
   console.error('Error fetching data:', error);
-  if (error.message === 'Settlement date has already been processed today') {
-    // Error handling specific to when the settlement date has already been processed today
-    toast.error("Settlement date has already been processed today");
-  } else {
-    // Generic error handling for other types of errors
-    toast.error("Settlement date has already been processed today.");
-  }
-  return; // Stop execution here
+   toast.error("Failed to update settlement date");
+   return;
 }
 
 
-
-    //1st try-catch block
+    //2st try-catch block
   
     try {
       const response = await fetch('/generate_pdf', {
@@ -72,7 +69,7 @@ try {
       console.error('Error fetching data:', error);
     }
   
-    //2nd try-catch block
+    //3nd try-catch block
   
     try {
       const response = await fetch('/generate_pdf_item', {
@@ -91,6 +88,8 @@ try {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+    
+    //4th try-catch block
 
     try {
       // Get the CSRF token from the cookies
@@ -132,6 +131,7 @@ try {
       toast("An unexpected error occurred, please try again later.");
     }
 
+    //5th try-catch block
     try {
       // Get the CSRF token from the cookies
       const csrftoken = getCookie('csrftoken');
@@ -259,7 +259,7 @@ try {
         <h1 variant="h5"> {t('admin_code')} : {code}</h1>
       </Box>
       <Box className={styles.admindate}>
-        <h1 variant="h5">{t('sells_date')} : {selectedDate ? selectedDate.toLocaleDateString('en-CA', {
+        <h1 variant="h5">{('精算日')} : {selectedDate ? selectedDate.toLocaleDateString('en-CA', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',

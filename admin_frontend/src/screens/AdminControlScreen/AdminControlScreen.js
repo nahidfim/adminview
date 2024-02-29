@@ -48,15 +48,13 @@ const AdminControlScreen = ({ setValue, t}) => {
   }, [])
   return (
   <Container className={styles.outermostContainer}>
-    <Box className={styles.OperatorCode}>
-          <h1 variant="h5"> {t('admin_code')} : {code}</h1>
-    </Box>
-      
-    <Box className={styles.ButtonGroup}>
-     
-        <Box className={styles.secondBox}>
-      
-      {/* <Typography variant="h5"> {t('lan_no')} : 5</Typography> */}
+   
+      <Box className={styles.ButtonGroup}>
+        
+      <Box className={styles.OperatorCode}>
+        <h5 variant="h5"> {t('admin_code')} : {code}</h5>
+      </Box>
+        
           <Button
             variant="large"
             className={styles.redButton}
@@ -65,7 +63,6 @@ const AdminControlScreen = ({ setValue, t}) => {
             {t('settlement process')}
           </Button>
 
-     
           <Button
             variant="large"
             className={styles.redButton}
@@ -73,6 +70,7 @@ const AdminControlScreen = ({ setValue, t}) => {
           >
             {t('Tablet settlement Search')}
           </Button>
+        
           <Button
             variant="large"
             className={styles.redButton}
@@ -88,6 +86,7 @@ const AdminControlScreen = ({ setValue, t}) => {
           >
             {t('端末EXCEL検索')}
           </Button>
+        
           <Button
             variant="large"
             className={styles.redButton}
@@ -95,14 +94,6 @@ const AdminControlScreen = ({ setValue, t}) => {
           >
             {t('商品EXCEL検索')}
           </Button>
-
-          {/* <Button
-            variant="large"
-            className={styles.redButton}
-            onClick={handleSattelementProcessExcel}
-          >
-            {t('EXCEL出力')}
-          </Button> */}
 
           <Button
             variant="large"
@@ -113,9 +104,6 @@ const AdminControlScreen = ({ setValue, t}) => {
           </Button>
 
         </Box>
-
-        
-      </Box>
       
     </Container>
   );

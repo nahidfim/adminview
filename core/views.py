@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from datetime import datetime
 from django.shortcuts import render
 import base64
 from django.core.files.base import ContentFile
@@ -21,12 +23,14 @@ from django.utils import timezone
 from datetime import datetime, time
 import json
 import pytz
-
+from django.core.exceptions import ValidationError
 from weasyprint import HTML, CSS
 
-
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
 # Flag to track if settlement date has been processed for the day
-settlement_processed_today = False
+# settlement_processed_today = False
 # Create your views here.
 
 
@@ -188,112 +192,122 @@ def get_product_category(request):
 @csrf_exempt
 def generate_pdf(request):
     order_transactions_list = []
-    order_transaction_map = {}
     total_order = 0
     total_amount = 0
 
-    today_date = timezone.now()
-    from_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.min.time())
-    to_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.max.time())
-    order_transactions_qs = order_transactions.objects.filter(
-        order_time__range=[from_date, to_date])
+    # Fetch all orders with settlement dates
+    orders = order_transactions.objects.filter(settlement_date__isnull=False,
+                                               provision_completion_flag=False,
+                                               order_cancellation_flag=False,
+                                               status="active")
 
-    for order_transaction in order_transactions_qs:
-        if order_transaction_map.get(order_transaction.table_no):
-            order_value = order_transaction_map[order_transaction.table_no]['total_order']
-            order_value += order_transaction.order_amount
-            order_transaction_map[order_transaction.table_no]['total_order'] = order_value
-            amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
-            amount_value += order_transaction.product_unit_price * \
-                order_transaction.order_amount
-            order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
-        else:
-            order_value = order_transaction.order_amount
-            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
-            order_transaction_map[order_transaction.table_no] = {
-                "total_order": order_value,
-                "total_amount": amount_value,
-                "lane_no": order_transaction.lane_no
-            }
+    for order in orders:
+        # Extract the order_time from the order
+        order_time = order.order_time.date()
 
-    for key, value in order_transaction_map.items():
-        total_order += value['total_order']
-        total_amount += value['total_amount']
-        value["table_no"] = key
-        order_transactions_list.append(value)
+        # Compare selected_date and order_time
+        if order.settlement_date == order_time:
+            order_transactions_list.append([
+                order.lane_no,
+                order.table_no,
+                order.order_amount,
+                order.product_unit_price * order.order_amount,
+                order.settlement_date.strftime('%Y-%m-%d'),
+            ])
 
-    data = {
-        "order_transactions": order_transactions_list,
-        "total_amount": total_amount,
-        "total_order": total_order,
-        "from_date": from_date,
-        "to_date": to_date
-    }
-    filename = f"order_transaction_{int(today_date.timestamp())}.pdf"
-    file_path = f"media/{filename}"
-    html_string = render_to_string('order_transaction_pdf.html', data)
-    css = CSS(string='@page { size: A4; margin: 0.15in;  }')
-    HTML(string=html_string).write_pdf(file_path, stylesheets=[css])
+            total_order += order.order_amount
+            total_amount += order.product_unit_price * order.order_amount
+
+    # Create PDF document
+    pdf_filename = f"Settlements_Report_Table_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_file_path = f"media/{pdf_filename}"
+    doc = SimpleDocTemplate(pdf_file_path, pagesize=letter)
+
+    # Define table data
+    table_data = [["LAN No.", "Table No.", "Total Order",
+                   "Total Amount", "Settlement Date"]]
+    table_data.extend(order_transactions_list)
+    table_data.append(["", "", "Total Order", total_order, ""])
+    table_data.append(["", "", "Total Amount", total_amount, ""])
+
+    # Create table
+    table = Table(table_data, colWidths=[70, 70, 70, 70, 100])
+    table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                               ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                               ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                               ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                               ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+
+    # Add table to the PDF document
+    doc.build([table])
+
+    # Save file path to database
     order_transaction_obj = OrderTransactionPDF.objects.create(
-        transaction_time=today_date, pdf_file=filename)
+        transaction_time=datetime.now(), pdf_file=pdf_filename)
+
     return JsonResponse({'pdf_url': order_transaction_obj.pdf_file.url}, safe=False)
 
 
 @csrf_exempt
 def generate_pdf_item(request):
     order_transactions_list = []
-    order_transaction_map = {}
     total_order = 0
     total_amount = 0
 
-    today_date = timezone.now()
-    from_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.min.time())
-    to_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.max.time())
-    order_transactions_qs = order_transactions.objects.filter(
-        order_time__range=[from_date, to_date])
+    # Fetch all orders with settlement dates
+    orders = order_transactions.objects.filter(settlement_date__isnull=False,
+                                               provision_completion_flag=False,
+                                               order_cancellation_flag=False,
+                                               status="active")
 
-    for order_transaction in order_transactions_qs:
-        if order_transaction_map.get(order_transaction.product_name_en):
-            order_value = order_transaction_map[order_transaction.product_name_en]['total_order']
-            order_value += order_transaction.order_amount
-            order_transaction_map[order_transaction.product_name_en]['total_order'] = order_value
-            amount_value = order_transaction_map[order_transaction.product_name_en]['total_amount']
-            amount_value += order_transaction.product_unit_price * \
-                order_transaction.order_amount
-            order_transaction_map[order_transaction.product_name_en]['total_amount'] = amount_value
-        else:
-            order_value = order_transaction.order_amount
-            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
-            order_transaction_map[order_transaction.product_name_en] = {
-                "total_order": order_value,
-                "total_amount": amount_value,
-                "product_code": order_transaction.product_code
-            }
+    for order in orders:
+        # Extract the order_time from the order
+        order_time = order.order_time.date()
 
-    for key, value in order_transaction_map.items():
-        total_order += value['total_order']
-        total_amount += value['total_amount']
-        value["product_name_en"] = key
-        order_transactions_list.append(value)
+        # Compare selected_date and order_time
+        if order.settlement_date == order_time:
+            order_transactions_list.append([
+                order.product_code,
+                order.product_name_en,
+                order.order_amount,
+                order.product_unit_price * order.order_amount,
+                order.settlement_date.strftime('%Y-%m-%d'),
+            ])
 
-    data = {
-        "order_transactions": order_transactions_list,
-        "total_amount": total_amount,
-        "total_order": total_order,
-        "from_date": from_date,
-        "to_date": to_date
-    }
-    filename = f"order_transaction_Item_{int(today_date.timestamp())}.pdf"
-    file_path = f"media/{filename}"
-    html_string = render_to_string('order_transaction_Item_pdf.html', data)
-    css = CSS(string='@page { size: A4; margin: 0.15in;  }')
-    HTML(string=html_string).write_pdf(file_path, stylesheets=[css])
+            total_order += order.order_amount
+            total_amount += order.product_unit_price * order.order_amount
+
+    # Create PDF document
+    pdf_filename = f"Settlements_Report_Product_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_file_path = f"media/{pdf_filename}"
+    doc = SimpleDocTemplate(pdf_file_path, pagesize=letter)
+
+    # Define table data
+    table_data = [["Product Code", "Product Name.",
+                   "Total Order", "Total Amount", "Settlement Date"]]
+    table_data.extend(order_transactions_list)
+    table_data.append(["", "", "Total Order", total_order, ""])
+    table_data.append(["", "", "Total Amount", total_amount, ""])
+
+    # Create table
+    table = Table(table_data, colWidths=[70, 150, 70, 70, 100])
+    table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                               ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                               ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                               ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                               ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+
+    # Add table to the PDF document
+    doc.build([table])
+
+    # Save file path to database
     order_transaction_obj = OrderTransactionItemPDF.objects.create(
-        transaction_time=today_date, pdf_file=filename)
+        transaction_time=datetime.now(), pdf_file=pdf_filename)
+
     return JsonResponse({'pdf_url': order_transaction_obj.pdf_file.url}, safe=False)
 
 
@@ -348,123 +362,67 @@ def search_item_pdf(request):
 @csrf_exempt
 def generate_excel(request):
     order_transactions_list = []
-    order_transaction_map = {}
     total_order = 0
     total_amount = 0
 
-    today_date = timezone.now()
-    from_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.min.time())
-    to_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.max.time())
-    order_transactions_qs = order_transactions.objects.filter(
-        order_time__range=[from_date, to_date])
+    # Fetch all orders with settlement dates
+    orders = order_transactions.objects.filter(settlement_date__isnull=False,
+                                               provision_completion_flag=False,
+                                               order_cancellation_flag=False,
+                                               status="active")
 
-    for order_transaction in order_transactions_qs:
-        if order_transaction_map.get(order_transaction.table_no):
-            order_value = order_transaction_map[order_transaction.table_no]['total_order']
-            order_value += order_transaction.order_amount
-            order_transaction_map[order_transaction.table_no]['total_order'] = order_value
-            amount_value = order_transaction_map[order_transaction.table_no]['total_amount']
-            amount_value += order_transaction.product_unit_price * \
-                order_transaction.order_amount
-            order_transaction_map[order_transaction.table_no]['total_amount'] = amount_value
-        else:
-            order_value = order_transaction.order_amount
-            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
-            order_transaction_map[order_transaction.table_no] = {
-                "total_order": order_value,
-                "total_amount": amount_value,
-                "lane_no": order_transaction.lane_no
-            }
+    for order in orders:
+        # Extract the order_time from the order
+        order_time = order.order_time.date()
 
-    for key, value in order_transaction_map.items():
-        total_order += value['total_order']
-        total_amount += value['total_amount']
-        value["table_no"] = key
-        order_transactions_list.append(value)
+        # Compare selected_date and order_time
+        if order.settlement_date == order_time:
+            order_transactions_list.append({
+                'lane_no': order.lane_no,
+                'table_no': order.table_no,
+                'total_order': order.order_amount,
+                'total_amount': order.product_unit_price * order.order_amount,
+                'settlement_date': order.settlement_date.strftime('%Y-%m-%d'),
+            })
 
-    data = {
-        "order_transactions": order_transactions_list,
-        "total_amount": total_amount,
-        "total_order": total_order,
-        "from_date": from_date,
-        "to_date": to_date
-    }
+            total_order += order.order_amount
+            total_amount += order.product_unit_price * order.order_amount
 
     # Generate Excel file
     wb = Workbook()
     ws = wb.active
 
-    # Get the current date and time
-    current_date = datetime.now()
-    # Add title and date at the top
+    # Add headers
+    headers = ["LAN No.", "Table No.", "Total Order",
+               "Total Amount", "Settlement Date"]
+    for col_index, header in enumerate(headers, start=1):
+        ws.cell(row=1, column=col_index, value=header)
 
-    title_cell = ws.cell(row=1, column=2)
-    title_cell.value = "Table Sells Report"
-    title_cell.font = Font(size=16, bold=True)
-    title_cell.alignment = Alignment(horizontal='center')
+    # Add data
+    for row_idx, transaction in enumerate(order_transactions_list, start=2):
+        ws.cell(row=row_idx, column=1, value=transaction["lane_no"])
+        ws.cell(row=row_idx, column=2, value=transaction["table_no"])
+        ws.cell(row=row_idx, column=3, value=transaction["total_order"])
+        ws.cell(row=row_idx, column=4, value=transaction["total_amount"])
+        ws.cell(row=row_idx, column=5, value=transaction["settlement_date"])
 
-    date_cell = ws.cell(row=2, column=2)
-    date_cell.value = f"Date: {current_date.strftime('%Y-%m-%d')}"
-    date_cell.font = Font(size=12, italic=True)
-    date_cell.alignment = Alignment(horizontal='center')
+    # Add total order and total amount rows
+    total_order_row = len(order_transactions_list) + 2
+    ws.cell(row=total_order_row, column=2, value="Total Order")
+    ws.cell(row=total_order_row, column=3, value=total_order)
 
-    # Define header background color
-    header_fill = PatternFill(start_color='0070C0',
-                              end_color='0070C0', fill_type='solid')
+    total_amount_row = len(order_transactions_list) + 3
+    ws.cell(row=total_amount_row, column=2, value="Total Amount")
+    ws.cell(row=total_amount_row, column=3, value=total_amount)
 
-    # Define thin border style
-    thin_border = Border(left=Side(style='thin'),
-                         right=Side(style='thin'),
-                         top=Side(style='thin'),
-                         bottom=Side(style='thin'))
-
-    # Add rows for total order and total amount
-    total_order_row = len(order_transactions_list) + 4
-    ws.cell(row=total_order_row, column=1,
-            value="Total Order").font = Font(bold=True)
-    ws.cell(row=total_order_row, column=3,
-            value=total_order).font = Font(bold=True)
-
-    total_amount_row = len(order_transactions_list) + 5
-    ws.cell(row=total_amount_row, column=1,
-            value="Total Amount").font = Font(bold=True)
-    ws.cell(row=total_amount_row, column=3,
-            value=f"{total_amount:,}円").font = Font(bold=True)
-
-   # Apply background color and border style to headers
-    for col_index, header in enumerate(["LAN No.", "テブル No", "注文数量", "合計金額"], start=1):
-        header_cell = ws.cell(row=3, column=col_index, value=header)
-        header_cell.fill = header_fill
-        header_cell.border = thin_border
-
-    # Apply thin border style to data cells
-    for row_idx, transaction in enumerate(order_transactions_list, start=4):
-        ws.cell(row=row_idx, column=1,
-                value=transaction["lane_no"]).border = thin_border
-        ws.cell(row=row_idx, column=1).alignment = Alignment(
-            horizontal='center')
-        ws.cell(row=row_idx, column=2,
-                value=transaction["table_no"]).border = thin_border
-        ws.cell(row=row_idx, column=2).alignment = Alignment(
-            horizontal='center')
-        ws.cell(row=row_idx, column=3,
-                value=transaction["total_order"]).border = thin_border
-        ws.cell(row=row_idx, column=3).alignment = Alignment(
-            horizontal='center')
-        ws.cell(row=row_idx, column=4,
-                value=f"{transaction['total_amount']:,}円").border = thin_border
-        ws.cell(row=row_idx, column=4).alignment = Alignment(
-            horizontal='center')
     # Save the Excel file
-    filename = f"Table_sells_Report_{today_date.strftime('%Y%m%d%H%M%S')}.xlsx"
+    filename = f"Settlements_Report_Table_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     file_path = f"media/{filename}"
     wb.save(file_path)
 
     # Save file path to database
     order_transaction_obj = OrderTransactionExcel.objects.create(
-        transaction_time=today_date, excel_file=filename)
+        transaction_time=datetime.now(), excel_file=filename)
 
     return JsonResponse({'excel_url': order_transaction_obj.excel_file.url}, safe=False)
 
@@ -472,123 +430,67 @@ def generate_excel(request):
 @csrf_exempt
 def generate_Item_excel(request):
     order_transactions_list = []
-    order_transaction_map = {}
     total_order = 0
     total_amount = 0
 
-    today_date = timezone.now()
-    from_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.min.time())
-    to_date = timezone.datetime.combine(
-        today_date.date(), timezone.datetime.max.time())
-    order_transactions_qs = order_transactions.objects.filter(
-        order_time__range=[from_date, to_date])
+    # Fetch all orders with settlement dates
+    orders = order_transactions.objects.filter(settlement_date__isnull=False,
+                                               provision_completion_flag=False,
+                                               order_cancellation_flag=False,
+                                               status="active")
 
-    for order_transaction in order_transactions_qs:
-        if order_transaction_map.get(order_transaction.product_name_en):
-            order_value = order_transaction_map[order_transaction.product_name_en]['total_order']
-            order_value += order_transaction.order_amount
-            order_transaction_map[order_transaction.product_name_en]['total_order'] = order_value
-            amount_value = order_transaction_map[order_transaction.product_name_en]['total_amount']
-            amount_value += order_transaction.product_unit_price * \
-                order_transaction.order_amount
-            order_transaction_map[order_transaction.product_name_en]['total_amount'] = amount_value
-        else:
-            order_value = order_transaction.order_amount
-            amount_value = order_transaction.product_unit_price * order_transaction.order_amount
-            order_transaction_map[order_transaction.product_name_en] = {
-                "total_order": order_value,
-                "total_amount": amount_value,
-                "product_code": order_transaction.product_code
-            }
+    for order in orders:
+        # Extract the order_time from the order
+        order_time = order.order_time.date()
 
-    for key, value in order_transaction_map.items():
-        total_order += value['total_order']
-        total_amount += value['total_amount']
-        value["product_name_en"] = key
-        order_transactions_list.append(value)
+        # Compare selected_date and order_time
+        if order.settlement_date == order_time:
+            order_transactions_list.append({
+                'product_code': order.product_code,
+                'product_name_en': order.product_name_en,
+                'total_order': order.order_amount,
+                'total_amount': order.product_unit_price * order.order_amount,
+                'settlement_date': order.settlement_date.strftime('%Y-%m-%d'),
+            })
 
-    data = {
-        "order_transactions": order_transactions_list,
-        "total_amount": total_amount,
-        "total_order": total_order,
-        "from_date": from_date,
-        "to_date": to_date
-    }
+            total_order += order.order_amount
+            total_amount += order.product_unit_price * order.order_amount
+
     # Generate Excel file
     wb = Workbook()
     ws = wb.active
 
-    # Get the current date and time
-    current_date = datetime.now()
-    # Add title and date at the top
+    # Add headers
+    headers = ["Product Code", "Product Name.", "Total Order",
+               "Total Amount", "Settlement Date"]
+    for col_index, header in enumerate(headers, start=1):
+        ws.cell(row=1, column=col_index, value=header)
 
-    title_cell = ws.cell(row=1, column=2)
-    title_cell.value = "Item Sells Report"
-    title_cell.font = Font(size=16, bold=True)
-    title_cell.alignment = Alignment(horizontal='center')
+    # Add data
+    for row_idx, transaction in enumerate(order_transactions_list, start=2):
+        ws.cell(row=row_idx, column=1, value=transaction["product_code"])
+        ws.cell(row=row_idx, column=2, value=transaction["product_name_en"])
+        ws.cell(row=row_idx, column=3, value=transaction["total_order"])
+        ws.cell(row=row_idx, column=4, value=transaction["total_amount"])
+        ws.cell(row=row_idx, column=5, value=transaction["settlement_date"])
 
-    date_cell = ws.cell(row=2, column=2)
-    date_cell.value = f"Date: {current_date.strftime('%Y-%m-%d')}"
-    date_cell.font = Font(size=12, italic=True)
-    date_cell.alignment = Alignment(horizontal='center')
+    # Add total order and total amount rows
+    total_order_row = len(order_transactions_list) + 2
+    ws.cell(row=total_order_row, column=2, value="Total Order")
+    ws.cell(row=total_order_row, column=3, value=total_order)
 
-    # Define header background color
-    header_fill = PatternFill(start_color='0070C0',
-                              end_color='0070C0', fill_type='solid')
-
-    # Define thin border style
-    thin_border = Border(left=Side(style='thin'),
-                         right=Side(style='thin'),
-                         top=Side(style='thin'),
-                         bottom=Side(style='thin'))
-
-    # Add rows for total order and total amount
-    total_order_row = len(order_transactions_list) + 4
-    ws.cell(row=total_order_row, column=1,
-            value="Total Order").font = Font(bold=True)
-    ws.cell(row=total_order_row, column=3,
-            value=total_order).font = Font(bold=True)
-
-    total_amount_row = len(order_transactions_list) + 5
-    ws.cell(row=total_amount_row, column=1,
-            value="Total Amount").font = Font(bold=True)
-    ws.cell(row=total_amount_row, column=3,
-            value=f"{total_amount:,}円").font = Font(bold=True)
-
-   # Apply background color and border style to headers
-    for col_index, header in enumerate(["コード", "商品名", "注文数量", "合計金額"], start=1):
-        header_cell = ws.cell(row=3, column=col_index, value=header)
-        header_cell.fill = header_fill
-        header_cell.border = thin_border
-
-     # Apply thin border style to data cells
-    for row_idx, transaction in enumerate(order_transactions_list, start=4):
-        ws.cell(row=row_idx, column=1,
-                value=transaction["product_code"]).border = thin_border
-        ws.cell(row=row_idx, column=1).alignment = Alignment(
-            horizontal='center')
-        ws.cell(row=row_idx, column=2,
-                value=transaction["product_name_en"]).border = thin_border
-        ws.cell(row=row_idx, column=2).alignment = Alignment(
-            horizontal='center')
-        ws.cell(row=row_idx, column=3,
-                value=transaction["total_order"]).border = thin_border
-        ws.cell(row=row_idx, column=3).alignment = Alignment(
-            horizontal='center')
-        ws.cell(row=row_idx, column=4,
-                value=f"{transaction['total_amount']:,}円").border = thin_border
-        ws.cell(row=row_idx, column=4).alignment = Alignment(
-            horizontal='center')
+    total_amount_row = len(order_transactions_list) + 3
+    ws.cell(row=total_amount_row, column=2, value="Total Amount")
+    ws.cell(row=total_amount_row, column=3, value=total_amount)
 
     # Save the Excel file
-    filename = f"Item_sells_Report_{today_date.strftime('%Y%m%d%H%M%S')}.xlsx"
+    filename = f"Settlements_Report_Product_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
     file_path = f"media/{filename}"
     wb.save(file_path)
 
     # Save file path to database
     order_transaction_obj = OrderTransactionItemExcel.objects.create(
-        transaction_time=today_date, excel_file=filename)
+        transaction_time=datetime.now(), excel_file=filename)
 
     return JsonResponse({'excel_url': order_transaction_obj.excel_file.url}, safe=False)
 
@@ -654,49 +556,89 @@ def get_order_date(request):
 #     if request.method == 'POST':
 #         body = json.loads(request.body)
 #         settlement_date = body['settlement_date']
-#         order_transactions.objects.filter(product_code=1).filter(provision_completion_flag=False).filter(
+#         order_transactions.objects.filter(order_no=1).filter(provision_completion_flag=False).filter(
 #             order_cancellation_flag=False).filter(status="active").update(settlement_date=datetime.strptime(settlement_date, '%Y-%m-%dT%H:%M:%S.%fZ'))
 #         return JsonResponse(True, safe=False)
+
+
 @csrf_exempt
 def store_settlement_date(request):
-    global settlement_processed_today
-
     if request.method == 'POST':
         body = json.loads(request.body)
-        settlement_date = body.get('settlement_date')
-        if not settlement_date:
-            return JsonResponse({'error': 'Settlement date not provided'}, status=400)
+        settlement_date_str = body.get('settlement_date')
 
-        # Check if settlement has already been processed today
-        if settlement_processed_today:
-            return JsonResponse({'error': 'Settlement date has already been processed today'}, status=400)
+        try:
+            # Attempt to parse the settlement_date string
+            settlement_date = None
 
-        # Define a list of order numbers dynamically
-        order_nos = [1, 2, 3]  # Add all order numbers here dynamically
+            # Try parsing the date with different formats
+            for date_format in ('%Y-%m-%d', '%Y-%m-%dT%H:%M:%S.%fZ'):
+                try:
+                    settlement_date = datetime.strptime(
+                        settlement_date_str, date_format).date()
+                    break  # Break the loop if parsing succeeds
+                except ValueError:
+                    pass  # Continue trying other formats
 
-        # Fetch orders based on the list of order numbers
-        orders = order_transactions.objects.filter(order_no__in=order_nos, provision_completion_flag=False,
-                                                   order_cancellation_flag=False, status="active")
+            if settlement_date is None:
+                raise ValueError('Invalid date format')
 
-        # Check if any orders are found
+        except ValueError as e:
+            # Handle the case where the date format is invalid
+            return JsonResponse({'error': str(e)}, status=400)
+
+        # Get all orders
+        orders = order_transactions.objects.filter(provision_completion_flag=False,
+                                                   order_cancellation_flag=False,
+                                                   status="active")
+
         if not orders:
-            return JsonResponse({'error': 'Orders not found'}, status=404)
+            return JsonResponse({'error': 'No active orders found'}, status=404)
 
-        # Fetch the order date from the database
-        order = orders.first()
-
-        # Ensure selectedDate matches the settlement_date
-        selected_date = datetime.strptime(
-            settlement_date, '%Y-%m-%dT%H:%M:%S.%fZ')
-        if order.order_time.date() != selected_date.date():
-            return JsonResponse({'error': 'Selected date does not match order date'}, status=400)
-
-        # Update the settlement date for each matching order in the database
+        # Iterate over each order
+        settlement_updated = False
         for order in orders:
-            order.settlement_date = selected_date
-            order.save()
+            # Extract the order_time from the order
+            order_time = order.order_time.date()
 
-        # Mark settlement as processed for today
-        settlement_processed_today = True
+            # Compare selected_date and order_time
+            selected_date = settlement_date
+            if selected_date == order_time:
+                # Update settlement_date for the order
+                order.settlement_date = settlement_date
+                order.save()
+                settlement_updated = True
 
-        return JsonResponse({'success': True})
+        if settlement_updated:
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'error': 'No matching orders found'}, status=404)
+
+
+# @csrf_exempt
+# def store_settlement_date(request):
+#     if request.method == 'POST':
+#         body = json.loads(request.body)
+#         settlement_date = body.get('settlement_date')
+#         if not settlement_date:
+#             return JsonResponse({'error': 'Settlement date not provided'}, status=400)
+
+#         # Fetch orders based on the order_time value
+#         order_time = body.get('order_time')
+#         if not order_time:
+#             return JsonResponse({'error': 'Order time not provided'}, status=400)
+
+#         # Fetch orders with the same order_time
+#         orders = order_transactions.objects.filter(order_time=order_time, provision_completion_flag=False,
+#                                                    order_cancellation_flag=False, status="active")
+
+#         # Check if any orders are found
+#         if not orders:
+#             return JsonResponse({'error': 'Orders not found'}, status=404)
+
+#         # Update the settlement date for each matching order in the database
+#         for order in orders:
+#             order.settlement_date = settlement_date
+#             order.save()
+
+#         return JsonResponse({'success': True})

@@ -3,20 +3,14 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import AdminHome from "./screens/AdminHome/AdminHome";
-import OrderConfirmationScreen from "./screens/OrderConfirmationScreen/OrderConfirmationScreen";
-import ViewOrder from "./screens/ViewOrder/ViewOrder";
-import DeliveryConfirmationScreen from "./screens/DeliveryConfirmationScreen/DeliveryConfirmationScreen";
 import AdminSignInSide from "./screens/AdminLoginAndRegister/Login";
 import AdminSignUp from "./screens/AdminLoginAndRegister/Register";
-import ProductInfo from "./screens/ProductInfo/ProductInfo";
-import CategoryMaster from "./screens/CategoryMaster/CategoryMaster";
 import AdminControlScreen from "./screens/AdminControlScreen/AdminControlScreen";
 import SattelementProcess from "./screens/SattelementProcess/SattelementProcess";
 import TableSellsPdf from "./screens/TableSellsPdf/TableSellsPdf";
 import TableSellsExcel from "./screens/TableSellsExcel/TableSellsExcel";
 import ProductSellsPdf from "./screens/ProductSellsPdf/ProductSellsPdf";
 import ProductSellsExcel from "./screens/ProductSellsExcel/ProductSellsExcel";
-import SattelementProcessExcel from "./screens/SattelementProcessExcel/SattelementProcessExcel";
 import { useTranslation } from 'react-i18next'
 import "./i18n.js";
 import axios from 'axios';
@@ -46,34 +40,12 @@ function App() {
         aria-label="scrollable auto tabs example"
         sx={{backgroundColor:"lightblue", display:"none"}}
       >
-        <Tab label="AdminHome" />
-        <Tab label="OrderConfirmationScreen" />
-        <Tab label="ViewOrder" />
-        <Tab label="DeliveryConfirmationScreen" />
-        <Tab label="LoginScreen"/>
-        <Tab label="SignupScreen"/>
-        <Tab label="AdminLoginScreen"/>
-        <Tab label="AdminSignupScreen"/>
-        <Tab label="ProductInfoScreen"/>
-        <Tab label="CategoryMaster"/>
-        <Tab label="AdminControlScreen"/>
       </Tabs>
       <TabPanel value={value} index={0} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <AdminHome setValue={setValue} t={t}/>
       </TabPanel>
-      <TabPanel value={value} index={1} sx={{ minWidth: "100%" }}>
-        {/* Your content for Tab 1 goes here */}
-        <OrderConfirmationScreen setValue={setValue} t={t}/>
-      </TabPanel>
-      <TabPanel value={value} index={2} sx={{ minWidth: "100%" }}>
-        {/* Your content for Tab 1 goes here */}
-        <ViewOrder setValue={setValue} setData={setData} t={t}/>
-      </TabPanel>
-      <TabPanel value={value} index={3} sx={{ minWidth: "100%" }}>
-        {/* Your content for Tab 1 goes here */}
-        <DeliveryConfirmationScreen setValue={setValue} data={data} iamge={image} t={t}/>
-      </TabPanel>
+
       <TabPanel value={value} index={8} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <AdminSignInSide setValue={setValue} data={data} t={t}/>
@@ -82,14 +54,7 @@ function App() {
         {/* Your content for Tab 1 goes here */}
         <AdminSignUp setValue={setValue} data={data} t={t}/>
       </TabPanel>
-      <TabPanel value={value} index={6} sx={{ minWidth: "100%" }}>
-        {/* Your content for Tab 1 goes here */}
-        <ProductInfo setValue={setValue} data={data} t={t}/>
-      </TabPanel>
-      <TabPanel value={value} index={7} sx={{ minWidth: "100%" }}>
-        {/* Your content for Tab 1 goes here */}
-        <CategoryMaster setValue={setValue} data={data} t={t}/>
-      </TabPanel>
+
       <TabPanel value={value} index={10} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <AdminControlScreen setValue={setValue} data={data} t={t}/>
@@ -102,14 +67,10 @@ function App() {
         {/* Your content for Tab 1 goes here */}
         <TableSellsPdf setValue={setValue} data={data} t={t}/>
       </TabPanel>
+
       <TabPanel value={value} index={13} sx={{ minWidth: "100%" }}>
         {/* Your content for Tab 1 goes here */}
         <ProductSellsPdf setValue={setValue} data={data} t={t}/>
-      </TabPanel>
-
-      <TabPanel value={value} index={14} sx={{ minWidth: "100%" }}>
-        {/* Your content for Tab 1 goes here */}
-        <SattelementProcessExcel setValue={setValue} data={data} t={t}/>
       </TabPanel>
 
       <TabPanel value={value} index={15} sx={{ minWidth: "100%" }}>
