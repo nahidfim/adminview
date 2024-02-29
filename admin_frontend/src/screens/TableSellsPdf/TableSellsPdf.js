@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Link,
   Button,
-  Typography
+  TablePagination
 } from "@mui/material";
 import styles from './TableSellsPdf.module.css';
 import DatePicker from "react-datepicker";
@@ -15,7 +22,18 @@ const TableSellsPdf = ({ setValue, t }) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
   const [pdfUrls, setPdfUrls] = React.useState([]);
+  
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleTableSellsPdf = () => {
     setValue();
@@ -69,10 +87,10 @@ const TableSellsPdf = ({ setValue, t }) => {
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.admincode}>
-        <h1 variant="h5"> {t('admin_code')} : {code}</h1>
+        <h5 variant="h5"> {t('admin_code')} : {code}</h5>
       </Box>
       <Box className={styles.admindate}>
-        <h1 variant="h5">{t('sells_date')} : {selectedFromDate ? selectedFromDate.toLocaleDateString('en-CA', {
+        <h5 variant="h5">{t('sells_date')} : {selectedFromDate ? selectedFromDate.toLocaleDateString('en-CA', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -80,7 +98,7 @@ const TableSellsPdf = ({ setValue, t }) => {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
-        }) : 'To Date'}</h1>
+        }) : 'To Date'}</h5>
       </Box>
       <Box className={styles.fourthbox}>
         <DatePicker
@@ -106,30 +124,42 @@ const TableSellsPdf = ({ setValue, t }) => {
         >
           {t('search')}
         </Button>
-        <ul>
-          {pdfUrls.map((pdf, index) => (
-            <li key={index} className={styles.dataListing}>
-              <a href={pdf.pdf_url} target="_blank" rel="noreferrer">Table sells pdf{pdf.transaction_time}</a>
-            </li>
-          ))}
-        </ul>
+        <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>PDF Name</TableCell>
+              <TableCell>Transaction Time</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {pdfUrls.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((pdf, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Link href={pdf.pdf_url} target="_blank" rel="noreferrer">
+                    Sattelement Report Table Pdf
+                  </Link>
+                </TableCell>
+                <TableCell>{pdf.transaction_time}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={pdfUrls.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
       </Box>
 
 
       <Box className={styles.ButtonGroup}>
-
-        {/* <Box className={styles.secondBox}>
-
-          <Typography variant="h5"> {t('lan_no')} : 5</Typography>
-          <Button
-            variant="large"
-            className={styles.lightgreenButton}
-            onClick={handleTableSellsPdf}
-          >
-            {t('print')}
-          </Button>
-        </Box> */}
 
         <Box className={styles.thirdbox}>
           <Button

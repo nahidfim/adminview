@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Link,
   Button,
-  Typography
+  TablePagination
 } from "@mui/material";
 import styles from './ProductSellsExcel.module.css';
 import DatePicker from "react-datepicker";
@@ -15,7 +22,18 @@ const ProductSellsExcel = ({ setValue, t }) => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [code, setCode] = React.useState('')
   const [excelUrls, setExcelUrls] = React.useState([]);
+ 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleSearchExcel = async () => {
     try {
@@ -64,10 +82,10 @@ const ProductSellsExcel = ({ setValue, t }) => {
   return (
     <Container className={styles.outermostContainer}>
       <Box className={styles.admincode}>
-        <h1 variant="h5"> {t('admin_code')} : {code}</h1>
+        <h5 variant="h5"> {t('admin_code')} : {code}</h5>
       </Box>
       <Box className={styles.admindate}>
-        <h1 variant="h5">{t('sells_date')} : {selectedFromDate ? selectedFromDate.toLocaleDateString('en-CA', {
+        <h5 variant="h5">{t('sells_date')} : {selectedFromDate ? selectedFromDate.toLocaleDateString('en-CA', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -75,7 +93,7 @@ const ProductSellsExcel = ({ setValue, t }) => {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
-        }) : 'To Date'}</h1>
+        }) : 'To Date'}</h5>
       </Box>
       <Box className={styles.fourthbox}>
         <DatePicker
@@ -101,13 +119,37 @@ const ProductSellsExcel = ({ setValue, t }) => {
         >
           {t('search')}
         </Button>
-        <ul>
-          {excelUrls.map((excel, index) => (
-            <li key={index} className={styles.dataListing}>
-              <a href={excel.excel_url} target="_blank" rel="noreferrer">Item sells Excel {excel.transaction_time}</a>
-            </li>
+        <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Excel Name</TableCell>
+              <TableCell>Transaction Time</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {excelUrls.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((excel, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Link href={excel.excel_url} target="_blank" rel="noreferrer">
+                   Settlement Report Products
+                  </Link>
+                </TableCell>
+                <TableCell>{excel.transaction_time}</TableCell>
+              </TableRow>
             ))}
-        </ul>  
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={excelUrls.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
       </Box>
 
