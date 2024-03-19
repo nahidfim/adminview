@@ -27,8 +27,9 @@ from django.core.exceptions import ValidationError
 from weasyprint import HTML, CSS
 
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 # Flag to track if settlement date has been processed for the day
 # settlement_processed_today = False
 # Create your views here.
@@ -195,43 +196,38 @@ def generate_pdf(request):
     total_order = 0
     total_amount = 0
 
-    # Fetch all orders with settlement dates
-    orders = order_transactions.objects.filter(settlement_date__isnull=False,
-                                               provision_completion_flag=False,
-                                               order_cancellation_flag=False,
-                                               status="active")
+    # Fetch all orders with provision_completion_flag set to True
+    orders = order_transactions.objects.filter(provision_completion_flag=True)
 
     for order in orders:
-        # Extract the order_time from the order
-        order_time = order.order_time.date()
+        order_transactions_list.append([
+            order.lane_no,
+            order.table_no,
+            order.order_amount,
+            order.product_unit_price * order.order_amount,
+        ])
 
-        # Compare selected_date and order_time
-        if order.settlement_date == order_time:
-            order_transactions_list.append([
-                order.lane_no,
-                order.table_no,
-                order.order_amount,
-                order.product_unit_price * order.order_amount,
-                order.settlement_date.strftime('%Y-%m-%d'),
-            ])
-
-            total_order += order.order_amount
-            total_amount += order.product_unit_price * order.order_amount
+        total_order += order.order_amount
+        total_amount += order.product_unit_price * order.order_amount
 
     # Create PDF document
     pdf_filename = f"Settlements_Report_Table_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
     pdf_file_path = f"media/{pdf_filename}"
     doc = SimpleDocTemplate(pdf_file_path, pagesize=letter)
 
+    # Define order time text
+    order_time_text = f"Order Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
     # Define table data
     table_data = [["LAN No.", "Table No.", "Total Order",
-                   "Total Amount", "Settlement Date"]]
+                   "Total Amount"]]  # Header without settlement date
+    table_data.extend(order_transactions_list)
     table_data.extend(order_transactions_list)
     table_data.append(["", "", "Total Order", total_order, ""])
     table_data.append(["", "", "Total Amount", total_amount, ""])
 
     # Create table
-    table = Table(table_data, colWidths=[70, 70, 70, 70, 100])
+    table = Table(table_data, colWidths=[70, 70, 70, 70])
     table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -240,8 +236,20 @@ def generate_pdf(request):
                                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
 
-    # Add table to the PDF document
-    doc.build([table])
+    # Define styles
+    styles = getSampleStyleSheet()
+
+    # Create Paragraph style
+    order_time_style = ParagraphStyle(name='Centered', alignment=1)
+
+    # Create Paragraph for order time with centered alignment
+    order_time_paragraph = Paragraph(order_time_text, style=order_time_style)
+
+    # Build content
+    content = [order_time_paragraph, table]
+
+    # Add content to the PDF document
+    doc.build(content)
 
     # Save file path to database
     order_transaction_obj = OrderTransactionPDF.objects.create(
@@ -258,22 +266,16 @@ def generate_pdf_item(request):
 
     # Fetch all orders with settlement dates
     orders = order_transactions.objects.filter(settlement_date__isnull=False,
-                                               provision_completion_flag=False,
-                                               order_cancellation_flag=False,
-                                               status="active")
+                                               provision_completion_flag=True)
 
     for order in orders:
-        # Extract the order_time from the order
-        order_time = order.order_time.date()
-
-        # Compare selected_date and order_time
-        if order.settlement_date == order_time:
+        # Compare settlement_date with order_time
+        if order.settlement_date == order.order_time.date():
             order_transactions_list.append([
                 order.product_code,
                 order.product_name_en,
                 order.order_amount,
                 order.product_unit_price * order.order_amount,
-                order.settlement_date.strftime('%Y-%m-%d'),
             ])
 
             total_order += order.order_amount
@@ -284,9 +286,12 @@ def generate_pdf_item(request):
     pdf_file_path = f"media/{pdf_filename}"
     doc = SimpleDocTemplate(pdf_file_path, pagesize=letter)
 
+    # Define order time text
+    order_time_text = f"Order Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
     # Define table data
     table_data = [["Product Code", "Product Name.",
-                   "Total Order", "Total Amount", "Settlement Date"]]
+                   "Total Order", "Total Amount"]]
     table_data.extend(order_transactions_list)
     table_data.append(["", "", "Total Order", total_order, ""])
     table_data.append(["", "", "Total Amount", total_amount, ""])
@@ -301,8 +306,20 @@ def generate_pdf_item(request):
                                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
 
-    # Add table to the PDF document
-    doc.build([table])
+    # Define styles
+    styles = getSampleStyleSheet()
+
+    # Create Paragraph style
+    order_time_style = ParagraphStyle(name='Centered', alignment=1)
+
+    # Create Paragraph for order time with centered alignment
+    order_time_paragraph = Paragraph(order_time_text, style=order_time_style)
+
+    # Build content
+    content = [order_time_paragraph, table]
+
+    # Add content to the PDF document
+    doc.build(content)
 
     # Save file path to database
     order_transaction_obj = OrderTransactionItemPDF.objects.create(
