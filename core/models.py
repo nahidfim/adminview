@@ -48,12 +48,13 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 class order_transactions(models.Model):
     order_no = models.CharField(max_length=100, primary_key=True)
+    sequential_order_no = models.IntegerField(unique=True)
     product_name_en = models.CharField(max_length=30)
-    lane_no = models.IntegerField(max_length=5)
+    lane_no = models.CharField(max_length=5)
     table_no = models.IntegerField(max_length=5)
     language_type = models.CharField(max_length=30)
     product_code = models.CharField(max_length=30)
-    product_unit_price = models.CharField(max_length=30)
+    product_unit_price = models.IntegerField(max_length=30)
     order_amount = models.IntegerField(max_length=30)
     status = models.CharField(max_length=30, default="active")
     order_time = models.DateTimeField(default=datetime.datetime.utcnow())
@@ -64,7 +65,7 @@ class order_transactions(models.Model):
     order_cancellation_flag = models.BooleanField(default=False)
     order_cancellation_time = models.TimeField(
         default=datetime.datetime.utcnow())
-    product_image_link_dest = models.TextField(max_length=50)
+    product_image = models.ImageField(upload_to='media/product_images/')
     settlement_date = models.DateField(default=datetime.datetime.now())
 
 
@@ -148,7 +149,7 @@ class product_info_master(models.Model):
     page_number = models.IntegerField(max_length=90, default=1, null=True)
     registration_time = models.TimeField(default=datetime.datetime.utcnow())
     image = models.ImageField(default=None, upload_to='static/media')
-    product_image_link_dest = models.TextField(max_length=50)
+    product_image = models.ImageField(upload_to='media/product_images/')
 
 
 class message_master(models.Model):

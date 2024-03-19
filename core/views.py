@@ -367,9 +367,7 @@ def generate_excel(request):
 
     # Fetch all orders with settlement dates
     orders = order_transactions.objects.filter(settlement_date__isnull=False,
-                                               provision_completion_flag=False,
-                                               order_cancellation_flag=False,
-                                               status="active")
+                                               provision_completion_flag=True,)
 
     for order in orders:
         # Extract the order_time from the order
@@ -394,7 +392,7 @@ def generate_excel(request):
 
     # Add headers
     headers = ["LAN No.", "Table No.", "Total Order",
-               "Total Amount", "Settlement Date"]
+               "Total Amount"]
     for col_index, header in enumerate(headers, start=1):
         ws.cell(row=1, column=col_index, value=header)
 
@@ -404,7 +402,6 @@ def generate_excel(request):
         ws.cell(row=row_idx, column=2, value=transaction["table_no"])
         ws.cell(row=row_idx, column=3, value=transaction["total_order"])
         ws.cell(row=row_idx, column=4, value=transaction["total_amount"])
-        ws.cell(row=row_idx, column=5, value=transaction["settlement_date"])
 
     # Add total order and total amount rows
     total_order_row = len(order_transactions_list) + 2
@@ -435,9 +432,7 @@ def generate_Item_excel(request):
 
     # Fetch all orders with settlement dates
     orders = order_transactions.objects.filter(settlement_date__isnull=False,
-                                               provision_completion_flag=False,
-                                               order_cancellation_flag=False,
-                                               status="active")
+                                               provision_completion_flag=True,)
 
     for order in orders:
         # Extract the order_time from the order
@@ -462,7 +457,7 @@ def generate_Item_excel(request):
 
     # Add headers
     headers = ["Product Code", "Product Name.", "Total Order",
-               "Total Amount", "Settlement Date"]
+               "Total Amount"]
     for col_index, header in enumerate(headers, start=1):
         ws.cell(row=1, column=col_index, value=header)
 
@@ -472,7 +467,6 @@ def generate_Item_excel(request):
         ws.cell(row=row_idx, column=2, value=transaction["product_name_en"])
         ws.cell(row=row_idx, column=3, value=transaction["total_order"])
         ws.cell(row=row_idx, column=4, value=transaction["total_amount"])
-        ws.cell(row=row_idx, column=5, value=transaction["settlement_date"])
 
     # Add total order and total amount rows
     total_order_row = len(order_transactions_list) + 2
@@ -546,8 +540,8 @@ def search_Item_excel(request):
 @csrf_exempt
 def get_order_date(request):
     if request.method == 'GET':
-        order_time = order_transactions.objects.filter(order_no=1).filter(provision_completion_flag=False).filter(
-            order_cancellation_flag=False).filter(status="active").values_list('order_time')
+        order_time = order_transactions.objects.filter(
+            provision_completion_flag=True).filter(status="compleated").values_list('order_time')
         return HttpResponse(order_time[0][0].strftime("%a %b %d %Y %H:%M:%S GMT%z (%Z)"))
 
 
@@ -588,9 +582,8 @@ def store_settlement_date(request):
             return JsonResponse({'error': str(e)}, status=400)
 
         # Get all orders
-        orders = order_transactions.objects.filter(provision_completion_flag=False,
-                                                   order_cancellation_flag=False,
-                                                   status="active")
+        orders = order_transactions.objects.filter(
+            provision_completion_flag=True)
 
         if not orders:
             return JsonResponse({'error': 'No active orders found'}, status=404)
